@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Browse Courses - UniCore{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-md-6">
+        <h2 class="fw-bold">Browse Courses</h2>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('student.dashboard') }}">Dashboard</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Browse</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body bg-light">
+        <form method="GET" action="{{ url_for('student.browse_courses') }}" class="row g-3">
+            <div class="col-md-4">
+                <input type="text" name="search" class="form-control" placeholder="Search by course name..." value="{{ request.args.get('search', '') }}">
+            </div>
+            <div class="col-md-3">
+                <select name="department" class="form-select">
+                    <option value="">All Departments</option>
+                    {% for dept in departments %}
+                        <option value="{{ dept.name }}" {% if request.args.get('department') == dept.name %}selected{% endif %}>{{ dept.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="category" class="form-select">
+                    <option value="">All Categories</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.name }}" {% if request.args.get('category') == cat.name %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    {% for course in courses %}
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100 border-0 rounded-lg">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="badge bg-secondary">{{ course.course_code }}</span>
+                    <span class="badge bg-info text-dark">{{ course.category }}</span>
+                </div>
+                <h5 class="card-title fw-bold text-primary">{{ course.course_name }}</h5>
+                <p class="card-text text-muted small">{{ course.description[:100] }}{% if course.description|length > 100 %}...{% endif %}</p>
+                <ul class="list-unstyled small mb-3">
+                    <li><i class="bi bi-building text-muted"></i> Dept: {{ course.department }}</li>
+                    <li><i class="bi bi-award text-muted"></i> Credits: {{ course.credits }}</li>
+                    <li><i class="bi bi-clock text-muted"></i> Duration: {{ course.duration }}</li>
+                    <li><i class="bi bi-person text-muted"></i> Instructor: {{ course.instructor_id }}</li>
+                </ul>
+            </div>
+            <div class="card-footer bg-white border-top-0 d-grid">
+                {% if course.course_code in my_enrollments %}
+                    <button class="btn btn-success disabled">Registered</button>
+                {% else %}
+                    <form action="{{ url_for('student.register_course', course_code=course.course_code) }}" method="POST">
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">Register Now</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="alert alert-warning text-center py-5 shadow-sm">
+            <i class="bi bi-search fa-3x d-block mb-3 text-muted"></i>
+            <h5>No Courses Found</h5>
+            <p>Try adjusting your search or filters.</p>
+            <a href="{{ url_for('student.browse_courses') }}" class="btn btn-outline-primary mt-2">Clear Filters</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

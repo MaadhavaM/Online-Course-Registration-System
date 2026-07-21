@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}Home - UniCore Registration System{% endblock %}
+
+{% block content %}
+<style>
+    /* Premium landing page styling */
+    .hero-section {
+        position: relative;
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border-radius: 1.5rem;
+        margin-top: 2rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(-45deg, #4e73df, #1cc88a, #36b9cc, #6610f2);
+        background-size: 400% 400%;
+        animation: gradientBG 15s ease infinite;
+        color: white;
+    }
+
+    @keyframes gradientBG {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 10;
+        text-align: center;
+        padding: 3rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 1.5rem;
+        max-width: 800px;
+        width: 90%;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        transform: translateY(20px);
+        opacity: 0;
+        animation: slideUpFade 1s forwards ease-out 0.5s;
+    }
+
+    @keyframes slideUpFade {
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        letter-spacing: -1px;
+        background: linear-gradient(to right, #ffffff, #e0e0e0);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        font-weight: 300;
+        margin-bottom: 2.5rem;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .btn-premium {
+        background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+        color: #4e73df;
+        font-weight: 600;
+        padding: 0.8rem 2.5rem;
+        border-radius: 50px;
+        border: none;
+        font-size: 1.1rem;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-premium:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 25px rgba(255, 255, 255, 0.4);
+        color: #2e59d9;
+    }
+    
+    .btn-outline-premium {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
+        font-weight: 600;
+        padding: 0.8rem 2.5rem;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-outline-premium:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-3px);
+        color: white;
+    }
+
+    .floating-shapes {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    .shape {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(5px);
+        border-radius: 50%;
+        animation: float 20s infinite linear;
+    }
+
+    @keyframes float {
+        0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* Features section */
+    .features-section {
+        padding: 4rem 0;
+    }
+    
+    .feature-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        height: 100%;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0,0,0,0.02);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(78, 115, 223, 0.15);
+    }
+    
+    .feature-icon-wrapper {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        color: white;
+    }
+    
+    .bg-gradient-primary { background: linear-gradient(135deg, #4e73df 0%, #224abe 100%); }
+    .bg-gradient-success { background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%); }
+    .bg-gradient-info { background: linear-gradient(135deg, #36b9cc 0%, #258391 100%); }
+
+</style>
+
+<div class="container pb-5">
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="floating-shapes">
+            <!-- Generating some background shapes -->
+            <div class="shape" style="width: 100px; height: 100px; left: 10%; animation-duration: 25s; animation-delay: 0s;"></div>
+            <div class="shape" style="width: 150px; height: 150px; left: 30%; animation-duration: 20s; animation-delay: -5s;"></div>
+            <div class="shape" style="width: 80px; height: 80px; left: 60%; animation-duration: 15s; animation-delay: -10s;"></div>
+            <div class="shape" style="width: 200px; height: 200px; left: 80%; animation-duration: 30s; animation-delay: -2s;"></div>
+            <div class="shape" style="width: 120px; height: 120px; left: 50%; animation-duration: 22s; animation-delay: -15s;"></div>
+        </div>
+
+        <div class="hero-content">
+            <h1 class="hero-title">Experience the Future of Learning</h1>
+            <p class="hero-subtitle">
+                UniCore provides a seamless, dynamic, and intuitive platform for students and instructors to connect. Discover courses, manage your schedule, and elevate your academic journey.
+            </p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                {% if not current_user.is_authenticated %}
+                <a href="{{ url_for('auth.login') }}" class="btn-premium">
+                    <i class="bi bi-box-arrow-in-right"></i> Sign In
+                </a>
+                <a href="{{ url_for('auth.register') }}" class="btn-outline-premium">
+                    <i class="bi bi-person-plus"></i> Register
+                </a>
+                {% else %}
+                <a href="{{ url_for('auth.login') }}" class="btn-premium">
+                    <i class="bi bi-speedometer2"></i> Go to Dashboard
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="features-section mt-5">
+        <div class="text-center mb-5 fade-in">
+            <h2 class="fw-bold" style="color: #2c3e50;">Why Choose UniCore?</h2>
+            <p class="text-muted">A powerful platform designed for modern education.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4 fade-in" style="animation-delay: 0.1s;">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper bg-gradient-primary shadow">
+                        <i class="bi bi-book"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Extensive Course Catalog</h4>
+                    <p class="text-muted mb-0">Browse through hundreds of high-quality courses across diverse departments, all in one place.</p>
+                </div>
+            </div>
+            <div class="col-md-4 fade-in" style="animation-delay: 0.2s;">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper bg-gradient-success shadow">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Seamless Registration</h4>
+                    <p class="text-muted mb-0">Our conflict-free registration engine ensures your schedule is perfectly optimized every semester.</p>
+                </div>
+            </div>
+            <div class="col-md-4 fade-in" style="animation-delay: 0.3s;">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper bg-gradient-info shadow">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Real-time Analytics</h4>
+                    <p class="text-muted mb-0">Instructors and admins can track engagement, enrollment trends, and student progress instantly.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

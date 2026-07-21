@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard - UniCore{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="fw-bold">Student Dashboard</h2>
+        <p class="text-muted">Welcome, {{ current_user.user_data.name }}! ({{ current_user.user_data.student_id }})</p>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs fw-bold text-uppercase mb-1">Registered Courses</div>
+                        <div class="h5 mb-0 fw-bold">{{ stats.registered_courses }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-journal-check fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs fw-bold text-uppercase mb-1">Completed Courses</div>
+                        <div class="h5 mb-0 fw-bold">{{ stats.completed_courses }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-award fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-info text-white shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs fw-bold text-uppercase mb-1">Credits Earned</div>
+                        <div class="h5 mb-0 fw-bold">{{ stats.credits_earned }} / {{ stats.total_credits }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-star-fill fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 fw-bold text-primary">My Registered Courses</h6>
+        <a href="{{ url_for('student.browse_courses') }}" class="btn btn-sm btn-primary">Browse New Courses</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Course Code</th>
+                        <th>Course Name</th>
+                        <th>Credits</th>
+                        <th>Status</th>
+                        <th>Registration Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in courses %}
+                        {% set enrollment = enrollments | selectattr('course_code', 'equalto', course.course_code) | first %}
+                        <tr>
+                            <td><span class="badge bg-secondary">{{ course.course_code }}</span></td>
+                            <td class="fw-bold">{{ course.course_name }}</td>
+                            <td>{{ course.credits }}</td>
+                            <td>
+                                {% if enrollment.status == 'Registered' %}
+                                    <span class="badge bg-primary">Registered</span>
+                                {% elif enrollment.status == 'Completed' %}
+                                    <span class="badge bg-success">Completed</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">{{ enrollment.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ enrollment.registration_date.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <a href="{{ url_for('student.view_materials', course_code=course.course_code) }}" class="btn btn-sm btn-outline-info" title="View Materials">
+                                    <i class="bi bi-folder2-open"></i>
+                                </a>
+                                {% if enrollment.status != 'Completed' %}
+                                    <form action="{{ url_for('student.drop_course', course_code=course.course_code) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to drop this course?');" title="Drop Course">
+                                            <i class="bi bi-x-circle"></i>
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4">
+                                <p class="text-muted mb-2">You are not registered for any courses yet.</p>
+                                <a href="{{ url_for('student.browse_courses') }}" class="btn btn-primary">Find Courses to Register</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

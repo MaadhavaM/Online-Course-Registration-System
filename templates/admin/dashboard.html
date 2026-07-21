@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard - UniCore{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="fw-bold">Admin Dashboard</h2>
+        <p class="text-muted">Welcome back, {{ current_user.user_data.username }}!</p>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Stat Cards -->
+    <div class="col-md-3">
+        <div class="card bg-primary text-white shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs fw-bold text-uppercase mb-1">Total Students</div>
+                        <div class="h5 mb-0 fw-bold">{{ stats.total_students }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-people fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs fw-bold text-uppercase mb-1">Total Instructors</div>
+                        <div class="h5 mb-0 fw-bold">{{ stats.total_instructors }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-person-workspace fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs fw-bold text-uppercase mb-1">Active Courses</div>
+                        <div class="h5 mb-0 fw-bold">{{ stats.active_courses }} / {{ stats.total_courses }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-journal-bookmark fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-dark shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs fw-bold text-uppercase mb-1">Total Enrollments</div>
+                        <div class="h5 mb-0 fw-bold">{{ stats.total_enrollments }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-card-checklist fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Admin Actions -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 fw-bold text-primary">Quick Actions</h6>
+            </div>
+            <div class="card-body">
+                <a href="{{ url_for('admin.manage_students') }}" class="btn btn-outline-primary m-1"><i class="bi bi-people"></i> Manage Students</a>
+                <a href="{{ url_for('admin.manage_instructors') }}" class="btn btn-outline-success m-1"><i class="bi bi-person-workspace"></i> Manage Instructors</a>
+                <a href="{{ url_for('admin.manage_courses') }}" class="btn btn-outline-info m-1"><i class="bi bi-journal-bookmark"></i> Manage Courses</a>
+                <a href="{{ url_for('admin.manage_dept_cat') }}" class="btn btn-outline-secondary m-1"><i class="bi bi-tags"></i> Depts & Categories</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

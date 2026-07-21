@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Login - UniCore{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center h-100 mt-5">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow-lg border-0 rounded-lg">
+            <div class="card-header bg-primary text-white text-center py-3">
+                <h3 class="mb-0 fw-bold"><i class="bi bi-box-arrow-in-right"></i> Sign In</h3>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {{ form.role.label(class="form-label fw-bold") }}
+                        {{ form.role(class="form-select") }}
+                        {% if form.role.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.role.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.email.label(class="form-label fw-bold") }}
+                        {{ form.email(class="form-control", placeholder="Enter your email") }}
+                        {% if form.email.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.email.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        {{ form.password.label(class="form-label fw-bold") }}
+                        {{ form.password(class="form-control", placeholder="Enter your password") }}
+                        {% if form.password.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.password.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        {{ form.remember(class="form-check-input") }}
+                        {{ form.remember.label(class="form-check-label") }}
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        {{ form.submit(class="btn btn-primary btn-lg fw-bold") }}
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center py-3 bg-light">
+                <div class="small">
+                    <a href="#">Forgot Password?</a>
+                </div>
+                <div class="small mt-2">
+                    Need an account? <a href="{{ url_for('auth.register') }}">Register here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
