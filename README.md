@@ -2,27 +2,27 @@
 
 UniCore is a comprehensive, web-based Online Course Registration System built with Python, Flask, and MongoDB. It provides dedicated portals for Students, Instructors, and Administrators to streamline the academic registration and management process.
 
-## 🌟 Features
+## Features
 
-### 🎓 For Students
+### For Students
 * **Account Registration:** Self-service registration for new students.
 * **Course Browsing:** Browse available courses by department and category.
 * **Enrollment Management:** Enroll in active courses and track enrollment status (Registered/Completed).
 * **Dashboard:** View a personalized dashboard with total enrollments, active courses, and registration dates.
 
-### 👨‍🏫 For Instructors
+### For Instructors
 * **Course Management:** Create, manage, and track courses assigned to them.
 * **Student Tracking:** View a detailed list of all students enrolled in their courses.
 * **Assignments:** Upload and manage course materials and assignments for enrolled students.
 * **Dashboard:** Track total students, active courses, and assignment metrics at a glance.
 
-### 🛡️ For Administrators
+### For Administrators
 * **Centralized Dashboard:** View high-level metrics (total students, instructors, courses, enrollments).
 * **User Management:** Create and provision Instructor accounts (students self-register).
 * **System Management:** Add and manage Departments and Course Categories.
 * **Data Export:** Export student records to CSV for external processing.
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 * **Backend:** Python 3, Flask
 * **Database:** MongoDB (via PyMongo)
@@ -30,7 +30,7 @@ UniCore is a comprehensive, web-based Online Course Registration System built wi
 * **Frontend:** HTML5, CSS3, Bootstrap 5, Jinja2 Templating
 * **Environment Management:** python-dotenv
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 * Python 3.8+
@@ -82,7 +82,7 @@ UniCore is a comprehensive, web-based Online Course Registration System built wi
    ```
    The application will be accessible at `http://127.0.0.1:5000/`.
 
-## 🔒 Default Credentials
+## Default Credentials
 
 If you ran the initialization scripts, you can log in with:
 
