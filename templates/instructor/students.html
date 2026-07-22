@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Enrolled Students - UniCore{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-md-12">
+        <h2 class="fw-bold">Enrolled Students</h2>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('instructor.dashboard') }}">Dashboard</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Students</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 fw-bold text-primary">Student Enrollments</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Course</th>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Registration Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for enrollment in enrollments %}
+                    <tr>
+                        <td>
+                            <span class="badge bg-secondary">{{ enrollment.course_code }}</span><br>
+                            <small class="text-muted">{{ course_map.get(enrollment.course_code, '') }}</small>
+                        </td>
+                        <td class="fw-bold">{{ enrollment.student_id }}</td>
+                        <td>{{ student_map.get(enrollment.student_id, {}).get('name', 'Unknown') }}</td>
+                        <td>{{ student_map.get(enrollment.student_id, {}).get('email', 'Unknown') }}</td>
+                        <td>{{ enrollment.registration_date.strftime('%Y-%m-%d') if enrollment.registration_date else 'N/A' }}</td>
+                        <td>
+                            {% if enrollment.status == 'Registered' %}
+                                <span class="badge bg-success">{{ enrollment.status }}</span>
+                            {% elif enrollment.status == 'Completed' %}
+                                <span class="badge bg-info text-dark">{{ enrollment.status }}</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">{{ enrollment.status }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">No students are currently enrolled in your courses.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -101,3 +101,27 @@ def manage_assignments():
         
     assignments = list(db.assignments.find({'course_code': {'$in': course_codes}}))
     return render_template('instructor/assignments.html', assignments=assignments, courses=my_courses)
+
+@instructor_bp.route('/students')
+@login_required
+@instructor_required
+def view_students():
+    db = get_db()
+    instructor_id = current_user.user_data['instructor_id']
+    
+    # Get courses taught by this instructor
+    my_courses = list(db.courses.find({'instructor_id': instructor_id}))
+    course_codes = [c['course_code'] for c in my_courses]
+    
+    # Get enrollments for these courses
+    enrollments = list(db.enrollments.find({'course_code': {'$in': course_codes}}))
+    
+    # Get student details for these enrollments
+    student_ids = [e['student_id'] for e in enrollments]
+    students = list(db.students.find({'student_id': {'$in': student_ids}}))
+    
+    # To easily map student_id to student name/email
+    student_map = {s['student_id']: s for s in students}
+    course_map = {c['course_code']: c['course_name'] for c in my_courses}
+    
+    return render_template('instructor/students.html', enrollments=enrollments, student_map=student_map, course_map=course_map)
