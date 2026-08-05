@@ -8,7 +8,7 @@ client = None
 fs = None
 
 def init_db(app):
-    global db, client
+    global db, client, fs
     # In production, we'd use app.config['MONGO_URI']
     mongo_uri = app.config.get('MONGO_URI')
     if mongo_uri:
