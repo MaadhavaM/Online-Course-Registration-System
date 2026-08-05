@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from database.db import get_db, get_fs
 from werkzeug.utils import secure_filename
 from functools import wraps
+from bson.objectid import ObjectId
 import os
 from config import Config
 
@@ -82,29 +83,59 @@ def manage_assignments():
     course_codes = [c['course_code'] for c in my_courses]
     
     if request.method == 'POST':
-        file = request.files.get('file')
-        file_id = None
-        filename = None
-        if file and file.filename != '':
-            filename = secure_filename(file.filename)
-            fs = get_fs()
-            # Save file to GridFS
-            file_id = fs.put(file, filename=filename, content_type=file.content_type)
+        try:
+            file = request.files.get('file')
+            file_id = None
+            filename = None
+            if file and file.filename != '':
+                filename = secure_filename(file.filename)
+                fs = get_fs()
+                # Save file to GridFS
+                file_id = fs.put(file, filename=filename, content_type=file.content_type)
+                
+            assignment_data = {
+                'course_code': request.form.get('course_code'),
+                'title': request.form.get('title'),
+                'description': request.form.get('description'),
+                'due_date': request.form.get('due_date'),
+                'file_id': file_id,
+                'filename': filename
+            }
+            db.assignments.insert_one(assignment_data)
+            flash('Assignment added successfully.', 'success')
+        except Exception as e:
+            print(f"Error adding assignment: {e}")
+            flash('An error occurred while adding the assignment. Please try again.', 'danger')
             
-        assignment_data = {
-            'course_code': request.form.get('course_code'),
-            'title': request.form.get('title'),
-            'description': request.form.get('description'),
-            'due_date': request.form.get('due_date'),
-            'file_id': file_id,
-            'filename': filename
-        }
-        db.assignments.insert_one(assignment_data)
-        flash('Assignment added successfully.', 'success')
         return redirect(url_for('instructor.manage_assignments'))
         
     assignments = list(db.assignments.find({'course_code': {'$in': course_codes}}))
     return render_template('instructor/assignments.html', assignments=assignments, courses=my_courses)
+
+@instructor_bp.route('/delete_assignment/<assignment_id>', methods=['POST'])
+@login_required
+@instructor_required
+def delete_assignment(assignment_id):
+    db = get_db()
+    
+    try:
+        assignment = db.assignments.find_one({'_id': ObjectId(assignment_id)})
+        if assignment:
+            # Delete file from GridFS if it exists
+            if assignment.get('file_id'):
+                fs = get_fs()
+                fs.delete(ObjectId(assignment.get('file_id')))
+            
+            # Delete assignment record
+            db.assignments.delete_one({'_id': ObjectId(assignment_id)})
+            flash('Assignment deleted successfully.', 'success')
+        else:
+            flash('Assignment not found.', 'danger')
+    except Exception as e:
+        print(f"Error deleting assignment: {e}")
+        flash('An error occurred while deleting the assignment.', 'danger')
+        
+    return redirect(url_for('instructor.manage_assignments'))
 
 @instructor_bp.route('/students')
 @login_required
