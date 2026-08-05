@@ -5,14 +5,14 @@
 <div class="row justify-content-center align-items-center mt-4 mb-5">
     <div class="col-md-8 col-lg-6">
         <div class="card shadow-lg border-0 rounded-lg">
-            <div class="card-header bg-success text-white text-center py-3">
+            <div class="card-header bg-primary text-white text-center py-3">
                 <h3 class="mb-0 fw-bold"><i class="bi bi-person-plus-fill"></i> Registration</h3>
             </div>
             <div class="card-body p-4">
                 <!-- Navigation Tabs -->
                 <ul class="nav nav-tabs nav-fill mb-4" id="registerTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active fw-bold text-success" id="student-tab" data-bs-toggle="tab" data-bs-target="#student-register" type="button" role="tab" aria-controls="student-register" aria-selected="true">Student</button>
+                        <button class="nav-link active fw-bold text-primary" id="student-tab" data-bs-toggle="tab" data-bs-target="#student-register" type="button" role="tab" aria-controls="student-register" aria-selected="true">Student</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link fw-bold text-secondary" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin-register" type="button" role="tab" aria-controls="admin-register" aria-selected="false">Admin</button>
@@ -111,7 +111,7 @@
                             </div>
                             
                             <div class="d-grid gap-2">
-                                {{ student_form.submit(class="btn btn-success btn-lg fw-bold") }}
+                                {{ student_form.submit(class="btn btn-primary btn-lg fw-bold") }}
                             </div>
                         </form>
                     </div>
@@ -174,7 +174,7 @@
                             </div>
                             
                             <div class="d-grid gap-2">
-                                {{ admin_form.submit(class="btn btn-secondary btn-lg fw-bold") }}
+                                {{ admin_form.submit(class="btn btn-primary btn-lg fw-bold") }}
                             </div>
                         </form>
                     </div>
@@ -196,16 +196,16 @@
         const adminTab = document.getElementById('admin-tab');
         
         studentTab.addEventListener('click', function() {
-            this.classList.add('text-success');
+            this.classList.add('text-primary');
             this.classList.remove('text-secondary');
-            adminTab.classList.remove('text-success');
+            adminTab.classList.remove('text-primary');
             adminTab.classList.add('text-secondary');
         });
         
         adminTab.addEventListener('click', function() {
-            this.classList.add('text-success');
+            this.classList.add('text-primary');
             this.classList.remove('text-secondary');
-            studentTab.classList.remove('text-success');
+            studentTab.classList.remove('text-primary');
             studentTab.classList.add('text-secondary');
         });
     });
