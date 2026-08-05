@@ -72,7 +72,7 @@
                         <th>Credits</th>
                         <th>Status</th>
                         <th>Registration Date</th>
-                        <th>Actions</th>
+                        <th>Course Material</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -93,16 +93,9 @@
                             </td>
                             <td>{{ enrollment.registration_date.strftime('%Y-%m-%d') }}</td>
                             <td>
-                                <a href="{{ url_for('student.view_materials', course_code=course.course_code) }}" class="btn btn-sm btn-outline-info" title="View Materials">
-                                    <i class="bi bi-folder2-open"></i>
+                                <a href="{{ url_for('student.view_materials', course_code=course.course_code) }}" class="btn btn-sm btn-primary fw-bold px-3 rounded-pill">
+                                    <i class="bi bi-file-earmark-arrow-down"></i> Go to Materials
                                 </a>
-                                {% if enrollment.status != 'Completed' %}
-                                    <form action="{{ url_for('student.drop_course', course_code=course.course_code) }}" method="POST" class="d-inline">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to drop this course?');" title="Drop Course">
-                                            <i class="bi bi-x-circle"></i>
-                                        </button>
-                                    </form>
-                                {% endif %}
                             </td>
                         </tr>
                     {% else %}

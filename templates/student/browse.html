@@ -5,12 +5,6 @@
 <div class="row mb-4 align-items-center">
     <div class="col-md-6">
         <h2 class="fw-bold">Browse Courses</h2>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ url_for('student.dashboard') }}">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Browse</li>
-            </ol>
-        </nav>
     </div>
 </div>
 
@@ -49,7 +43,12 @@
         <div class="card shadow-sm h-100 border-0 rounded-lg">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="badge bg-secondary">{{ course.course_code }}</span>
+                    <div>
+                        <span class="badge bg-secondary">{{ course.course_code }}</span>
+                        {% if course.course_code in my_enrollments %}
+                            <i class="bi bi-check-circle-fill text-success ms-1" title="Registered"></i>
+                        {% endif %}
+                    </div>
                     <span class="badge bg-info text-dark">{{ course.category }}</span>
                 </div>
                 <h5 class="card-title fw-bold text-primary">{{ course.course_name }}</h5>
@@ -63,7 +62,7 @@
             </div>
             <div class="card-footer bg-white border-top-0 d-grid">
                 {% if course.course_code in my_enrollments %}
-                    <button class="btn btn-success disabled">Registered</button>
+                    <a href="{{ url_for('student.view_materials', course_code=course.course_code) }}" class="btn btn-success w-100 fw-bold border-0" style="background-color: #28a745; color: white;">Go to Course</a>
                 {% else %}
                     <form action="{{ url_for('student.register_course', course_code=course.course_code) }}" method="POST">
                         <button type="submit" class="btn btn-primary w-100 fw-bold">Register Now</button>

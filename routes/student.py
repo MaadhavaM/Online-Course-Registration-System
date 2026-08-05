@@ -64,6 +64,9 @@ def browse_courses():
     student_id = current_user.user_data['student_id']
     my_enrollments = [e['course_code'] for e in db.enrollments.find({'student_id': student_id})]
     
+    # Sort courses so registered ones appear first
+    courses.sort(key=lambda c: 0 if c['course_code'] in my_enrollments else 1)
+    
     return render_template('student/browse.html', courses=courses, departments=departments, categories=categories, my_enrollments=my_enrollments)
 
 @student_bp.route('/register_course/<course_code>', methods=['POST'])
