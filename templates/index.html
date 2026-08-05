@@ -7,15 +7,13 @@
     /* Premium landing page styling */
     .hero-section {
         position: relative;
-        min-height: 80vh;
+        min-height: 85vh;
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
-        border-radius: 1.5rem;
-        margin-top: 2rem;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        background: linear-gradient(-45deg, #4e73df, #1cc88a, #36b9cc, #6610f2);
+        margin-top: -1.5rem; /* Pull up under the navbar slightly */
+        background: linear-gradient(-45deg, #6a11cb, #2575fc, #8E2DE2, #4A00E0);
         background-size: 400% 400%;
         animation: gradientBG 15s ease infinite;
         color: white;
@@ -31,15 +29,15 @@
         position: relative;
         z-index: 10;
         text-align: center;
-        padding: 3rem;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 1.5rem;
-        max-width: 800px;
-        width: 90%;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        padding: 4rem 3rem;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 2rem;
+        max-width: 850px;
+        width: 95%;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
         transform: translateY(20px);
         opacity: 0;
         animation: slideUpFade 1s forwards ease-out 0.5s;
@@ -53,28 +51,25 @@
     }
 
     .hero-title {
-        font-size: 3.5rem;
+        font-size: 4rem;
         font-weight: 800;
         margin-bottom: 1.5rem;
         letter-spacing: -1px;
-        background: linear-gradient(to right, #ffffff, #e0e0e0);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        color: #ffffff;
+        text-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
 
     .hero-subtitle {
-        font-size: 1.2rem;
-        font-weight: 300;
-        margin-bottom: 2.5rem;
+        font-size: 1.3rem;
+        font-weight: 400;
+        margin-bottom: 3rem;
         line-height: 1.6;
-        color: rgba(255, 255, 255, 0.9);
+        color: rgba(255, 255, 255, 0.95);
     }
 
     .btn-premium {
-        background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
-        color: #4e73df;
+        background: #ffffff;
+        color: #6a11cb;
         font-weight: 600;
         padding: 0.8rem 2.5rem;
         border-radius: 50px;
@@ -180,9 +175,8 @@
 
 </style>
 
-<div class="container pb-5">
-    <!-- Hero Section -->
-    <div class="hero-section">
+<!-- Hero Section (Full Width) -->
+<div class="hero-section">
         <div class="floating-shapes">
             <!-- Generating some background shapes -->
             <div class="shape" style="width: 100px; height: 100px; left: 10%; animation-duration: 25s; animation-delay: 0s;"></div>
@@ -213,7 +207,9 @@
             </div>
         </div>
     </div>
+</div>
 
+<div class="container pb-5">
     <!-- Features Section -->
     <div class="features-section mt-5">
         <div class="text-center mb-5 fade-in">
