@@ -50,8 +50,10 @@
                             {% endif %}
                         </td>
                         <td>
-                            {% if assignment.file %}
-                                <a href="#" class="btn btn-sm btn-outline-info"><i class="bi bi-download"></i> Download</a>
+                            {% if assignment.file_id %}
+                                <a href="{{ url_for('download_file', file_id=assignment.file_id) }}" class="btn btn-sm btn-outline-info"><i class="bi bi-download"></i> Download</a>
+                            {% elif assignment.file %}
+                                <span class="text-muted small">Legacy file (needs re-upload)</span>
                             {% else %}
                                 <span class="text-muted">No File</span>
                             {% endif %}

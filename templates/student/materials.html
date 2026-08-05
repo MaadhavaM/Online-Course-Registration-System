@@ -46,8 +46,10 @@
                                     <small class="text-muted">{% if item.due_date %}Due: {{ item.due_date }}{% endif %}</small>
                                 </div>
                                 <p class="mb-1 small">{{ item.description }}</p>
-                                {% if item.file %}
-                                    <a href="{{ url_for('download_file', filename=item.file) }}" class="btn btn-sm btn-outline-info mt-2"><i class="bi bi-download"></i> Download File</a>
+                                {% if item.file_id %}
+                                    <a href="{{ url_for('download_file', file_id=item.file_id) }}" class="btn btn-sm btn-outline-info mt-2"><i class="bi bi-download"></i> Download {{ item.filename }}</a>
+                                {% elif item.file %}
+                                    <span class="text-muted small mt-2 d-block"><i class="bi bi-exclamation-triangle"></i> Legacy file - Please ask instructor to re-upload.</span>
                                 {% endif %}
                             </div>
                         {% endfor %}

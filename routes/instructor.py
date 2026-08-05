@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
-from database.db import get_db
+from database.db import get_db, get_fs
 from werkzeug.utils import secure_filename
 from functools import wraps
 import os
@@ -83,17 +83,21 @@ def manage_assignments():
     
     if request.method == 'POST':
         file = request.files.get('file')
+        file_id = None
         filename = None
         if file and file.filename != '':
             filename = secure_filename(file.filename)
-            file.save(os.path.join(Config.UPLOAD_FOLDER, filename))
+            fs = get_fs()
+            # Save file to GridFS
+            file_id = fs.put(file, filename=filename, content_type=file.content_type)
             
         assignment_data = {
             'course_code': request.form.get('course_code'),
             'title': request.form.get('title'),
             'description': request.form.get('description'),
             'due_date': request.form.get('due_date'),
-            'file': filename
+            'file_id': file_id,
+            'filename': filename
         }
         db.assignments.insert_one(assignment_data)
         flash('Assignment added successfully.', 'success')

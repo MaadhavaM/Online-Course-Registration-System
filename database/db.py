@@ -1,9 +1,11 @@
 from pymongo import MongoClient
 import os
 import certifi
+import gridfs
 
 db = None
 client = None
+fs = None
 
 def init_db(app):
     global db, client
@@ -13,9 +15,13 @@ def init_db(app):
         client = MongoClient(mongo_uri, tlsCAFile=certifi.where(), tlsAllowInvalidCertificates=True)
         # Parse the database name from URI or default to 'online_course_registration'
         db = client.get_database('online_course_registration')
-        print("Connected to MongoDB successfully.")
+        fs = gridfs.GridFS(db)
+        print("Connected to MongoDB and initialized GridFS successfully.")
     else:
         print("Warning: MONGO_URI not found in configuration.")
 
 def get_db():
     return db
+
+def get_fs():
+    return fs

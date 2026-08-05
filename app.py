@@ -1,8 +1,10 @@
-from flask import Flask, render_template, redirect, url_for, send_from_directory
+from flask import Flask, render_template, redirect, url_for, send_file, abort
 from flask_login import LoginManager
 from config import Config
-from database.db import init_db
+from database.db import init_db, get_fs
 from models.user import get_user_by_id
+from bson.objectid import ObjectId
+import io
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -36,9 +38,20 @@ def create_app(config_class=Config):
     def index():
         return render_template('index.html')
 
-    @app.route('/uploads/<path:filename>')
-    def download_file(filename):
-        return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
+    @app.route('/download/<file_id>')
+    def download_file(file_id):
+        fs = get_fs()
+        try:
+            grid_out = fs.get(ObjectId(file_id))
+            return send_file(
+                io.BytesIO(grid_out.read()),
+                mimetype=grid_out.content_type,
+                as_attachment=True,
+                download_name=grid_out.filename
+            )
+        except Exception as e:
+            print(f"Error downloading file: {e}")
+            abort(404)
 
     return app
 
