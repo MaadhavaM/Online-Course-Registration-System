@@ -138,33 +138,55 @@
     .feature-card {
         background: white;
         border-radius: 1rem;
-        padding: 2rem;
+        padding: 2.5rem 2rem;
         height: 100%;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        border: 1px solid rgba(0,0,0,0.02);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 10px 30px rgba(74, 0, 224, 0.08);
+        border: 1px solid rgba(142, 45, 226, 0.1);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .feature-card::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 4px;
+        background: linear-gradient(90deg, #8E2DE2, #4A00E0);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s ease;
     }
     
     .feature-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 40px rgba(78, 115, 223, 0.15);
+        transform: translateY(-12px);
+        box-shadow: 0 20px 40px rgba(74, 0, 224, 0.15);
+    }
+    
+    .feature-card:hover::before {
+        transform: scaleX(1);
     }
     
     .feature-icon-wrapper {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
+        width: 65px;
+        height: 65px;
+        border-radius: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
+        font-size: 1.75rem;
         margin-bottom: 1.5rem;
         color: white;
+        transform: rotate(-5deg);
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover .feature-icon-wrapper {
+        transform: rotate(0deg) scale(1.1);
     }
     
-    .bg-gradient-primary { background: linear-gradient(135deg, #4e73df 0%, #224abe 100%); }
-    .bg-gradient-success { background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%); }
-    .bg-gradient-info { background: linear-gradient(135deg, #36b9cc 0%, #258391 100%); }
+    .bg-gradient-purple-1 { background: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%); }
+    .bg-gradient-purple-2 { background: linear-gradient(135deg, #a770ef 0%, #7b2cbf 100%); }
+    .bg-gradient-purple-3 { background: linear-gradient(135deg, #9d4edd 0%, #5a189a 100%); }
 
 </style>
 
@@ -209,25 +231,25 @@
         <div class="row g-4">
             <div class="col-md-4 fade-in" style="animation-delay: 0.1s;">
                 <div class="feature-card">
-                    <div class="feature-icon-wrapper bg-gradient-primary shadow">
+                    <div class="feature-icon-wrapper bg-gradient-purple-1 shadow">
                         <i class="bi bi-book"></i>
                     </div>
-                    <h4 class="fw-bold mb-3">Extensive Course Catalog</h4>
+                    <h4 class="fw-bold mb-3 text-dark">Extensive Course Catalog</h4>
                     <p class="text-muted mb-0">Browse through hundreds of high-quality courses across diverse departments, all in one place.</p>
                 </div>
             </div>
             <div class="col-md-4 fade-in" style="animation-delay: 0.2s;">
                 <div class="feature-card">
-                    <div class="feature-icon-wrapper bg-gradient-success shadow">
+                    <div class="feature-icon-wrapper bg-gradient-purple-2 shadow">
                         <i class="bi bi-calendar-check"></i>
                     </div>
-                    <h4 class="fw-bold mb-3">Seamless Registration</h4>
+                    <h4 class="fw-bold mb-3 text-dark">Seamless Registration</h4>
                     <p class="text-muted mb-0">Our conflict-free registration engine ensures your schedule is perfectly optimized every semester.</p>
                 </div>
             </div>
             <div class="col-md-4 fade-in" style="animation-delay: 0.3s;">
                 <div class="feature-card">
-                    <div class="feature-icon-wrapper bg-gradient-info shadow">
+                    <div class="feature-icon-wrapper bg-gradient-purple-3 shadow">
                         <i class="bi bi-graph-up-arrow"></i>
                     </div>
                     <h4 class="fw-bold mb-3">Real-time Analytics</h4>
