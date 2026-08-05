@@ -21,20 +21,22 @@
             <div class="card-body">
                 <ul class="list-group">
                     {% for dept in departments %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            {{ dept.name }}
-                            <form action="{{ url_for('admin.delete_dept', dept_id=dept._id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete department?');">
-                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                            </form>
-                        </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ dept.name }}
+                        <form action="{{ url_for('admin.delete_dept', dept_id=dept._id) }}" method="POST"
+                            class="d-inline" onsubmit="return confirm('Delete department?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"><i
+                                    class="bi bi-trash"></i></button>
+                        </form>
+                    </li>
                     {% else %}
-                        <li class="list-group-item text-muted">No departments found.</li>
+                    <li class="list-group-item text-muted">No departments found.</li>
                     {% endfor %}
                 </ul>
             </div>
         </div>
     </div>
-    
+
     <!-- Categories -->
     <div class="col-md-6">
         <div class="card shadow mb-4">
@@ -47,14 +49,16 @@
             <div class="card-body">
                 <ul class="list-group">
                     {% for cat in categories %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            {{ cat.name }}
-                            <form action="{{ url_for('admin.delete_cat', cat_id=cat._id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete category?');">
-                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                            </form>
-                        </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ cat.name }}
+                        <form action="{{ url_for('admin.delete_cat', cat_id=cat._id) }}" method="POST" class="d-inline"
+                            onsubmit="return confirm('Delete category?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"><i
+                                    class="bi bi-trash"></i></button>
+                        </form>
+                    </li>
                     {% else %}
-                        <li class="list-group-item text-muted">No categories found.</li>
+                    <li class="list-group-item text-muted">No categories found.</li>
                     {% endfor %}
                 </ul>
             </div>
@@ -70,12 +74,15 @@
                 <input type="hidden" name="action" value="add_dept">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title">Add Department</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-bold">Department Name</label>
-                        <input type="text" class="form-control" name="name" pattern="[A-Za-z\s]+" oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')" title="Only alphabets and spaces are allowed" required>
+                        <input type="text" class="form-control" name="name" pattern="[A-Za-z\s]+"
+                            oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')"
+                            title="Only alphabets and spaces are allowed" required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -95,12 +102,15 @@
                 <input type="hidden" name="action" value="add_cat">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title">Add Category</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-bold">Category Name</label>
-                        <input type="text" class="form-control" name="name" pattern="[A-Za-z\s]+" oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')" title="Only alphabets and spaces are allowed" required>
+                        <input type="text" class="form-control" name="name" pattern="[A-Za-z\s]+"
+                            oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')"
+                            title="Only alphabets and spaces are allowed" required>
                     </div>
                 </div>
                 <div class="modal-footer">
