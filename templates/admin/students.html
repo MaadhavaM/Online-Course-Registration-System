@@ -45,29 +45,7 @@
                             </form>
                         </td>
                     </tr>
-                    
-                    <!-- View Student Modal -->
-                    <div class="modal fade" id="viewStudentModal{{ student._id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header bg-primary text-white">
-                                    <h5 class="modal-title">Student Details</h5>
-                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <p><strong>ID:</strong> {{ student.student_id }}</p>
-                                    <p><strong>Name:</strong> {{ student.name }}</p>
-                                    <p><strong>Email:</strong> {{ student.email }}</p>
-                                    <p><strong>Phone:</strong> {{ student.phone }}</p>
-                                    <p><strong>Department:</strong> {{ student.department }}</p>
-                                    <p><strong>Semester:</strong> {{ student.semester }}</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
                     {% else %}
                     <tr>
                         <td colspan="6" class="text-center">No students found.</td>
@@ -78,4 +56,29 @@
         </div>
     </div>
 </div>
+
+{% for student in students %}
+<!-- View Student Modal -->
+<div class="modal fade" id="viewStudentModal{{ student._id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Student Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>ID:</strong> {{ student.student_id }}</p>
+                <p><strong>Name:</strong> {{ student.name }}</p>
+                <p><strong>Email:</strong> {{ student.email }}</p>
+                <p><strong>Phone:</strong> {{ student.phone }}</p>
+                <p><strong>Department:</strong> {{ student.department }}</p>
+                <p><strong>Semester:</strong> {{ student.semester }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
 {% endblock %}
