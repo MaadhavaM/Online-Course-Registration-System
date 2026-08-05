@@ -5,12 +5,6 @@
 <div class="row mb-4 align-items-center">
     <div class="col-md-8">
         <h2 class="fw-bold">Course Materials: {{ course.course_name }}</h2>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ url_for('student.dashboard') }}">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{{ course.course_code }}</li>
-            </ol>
-        </nav>
     </div>
 </div>
 
@@ -26,7 +20,12 @@
                 <p><strong>Credits:</strong> {{ course.credits }}</p>
                 <p><strong>Duration:</strong> {{ course.duration }}</p>
                 <hr>
-                <p class="small text-muted">{{ course.description }}</p>
+                <p class="small text-muted mb-0">{{ course.description }}</p>
+            </div>
+            <div class="card-footer bg-white border-top-0 pt-0">
+                <form action="{{ url_for('student.drop_course', course_code=course.course_code) }}" method="POST">
+                    <button type="submit" class="btn btn-outline-danger w-100 fw-bold" onclick="return confirm('Are you sure you want to de-register from this course?');">De-register Course</button>
+                </form>
             </div>
         </div>
     </div>
