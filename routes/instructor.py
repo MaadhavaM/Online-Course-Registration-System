@@ -91,7 +91,7 @@ def manage_assignments():
                 filename = secure_filename(file.filename)
                 fs = get_fs()
                 # Save file to GridFS
-                file_id = fs.put(file, filename=filename, content_type=file.content_type)
+                file_id = fs.put(file.read(), filename=filename, content_type=file.content_type)
                 
             assignment_data = {
                 'course_code': request.form.get('course_code'),
@@ -105,7 +105,7 @@ def manage_assignments():
             flash('Assignment added successfully.', 'success')
         except Exception as e:
             print(f"Error adding assignment: {e}")
-            flash('An error occurred while adding the assignment. Please try again.', 'danger')
+            flash(f'An error occurred: {str(e)}', 'danger')
             
         return redirect(url_for('instructor.manage_assignments'))
         
