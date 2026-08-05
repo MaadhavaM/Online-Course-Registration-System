@@ -62,7 +62,7 @@
             </div>
             <div class="card-footer bg-white border-top-0 d-grid">
                 {% if course.course_code in my_enrollments %}
-                    <a href="{{ url_for('student.view_materials', course_code=course.course_code) }}" class="btn btn-success w-100 fw-bold border-0" style="background-color: #28a745; color: white;">Go to Course</a>
+                    <a href="{{ url_for('student.view_materials', course_code=course.course_code) }}" class="btn btn-outline-primary w-100 fw-bold">Go to Course <i class="bi bi-arrow-right ms-1"></i></a>
                 {% else %}
                     <form action="{{ url_for('student.register_course', course_code=course.course_code) }}" method="POST">
                         <button type="submit" class="btn btn-primary w-100 fw-bold">Register Now</button>
