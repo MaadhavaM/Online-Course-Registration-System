@@ -76,7 +76,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Full Name</label>
-                        <input type="text" class="form-control" name="name" required>
+                        <input type="text" class="form-control" name="name" pattern="[A-Za-z\s]+" oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')" title="Only alphabets and spaces are allowed" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Email</label>

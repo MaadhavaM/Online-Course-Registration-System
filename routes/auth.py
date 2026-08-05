@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
-from forms.auth_forms import LoginForm, StudentRegistrationForm
+from forms.auth_forms import LoginForm, StudentRegistrationForm, AdminRegistrationForm
 from models.user import User, verify_password
 from database.db import get_db
 from werkzeug.security import generate_password_hash
@@ -55,29 +55,52 @@ def login():
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('student.dashboard'))
+        if current_user.role == 'admin':
+            return redirect(url_for('admin.dashboard'))
+        elif current_user.role == 'instructor':
+            return redirect(url_for('instructor.dashboard'))
+        else:
+            return redirect(url_for('student.dashboard'))
         
-    form = StudentRegistrationForm()
-    if form.validate_on_submit():
+    student_form = StudentRegistrationForm()
+    admin_form = AdminRegistrationForm()
+
+    if student_form.submit.data and student_form.validate():
         db = get_db()
-        hashed_password = generate_password_hash(form.password.data)
+        hashed_password = generate_password_hash(student_form.password.data)
         
         student_data = {
-            "student_id": form.student_id.data,
-            "name": form.name.data,
-            "email": form.email.data,
-            "phone": form.phone.data,
-            "department": form.department.data,
-            "semester": form.semester.data,
+            "student_id": student_form.student_id.data,
+            "name": student_form.name.data,
+            "email": student_form.email.data,
+            "phone": student_form.phone.data,
+            "department": student_form.department.data,
+            "semester": student_form.semester.data,
             "password": hashed_password,
             "profile_image": "default.png"
         }
         
         db.students.insert_one(student_data)
-        flash('Registration successful! You can now login.', 'success')
+        flash('Student Registration successful! You can now login.', 'success')
+        return redirect(url_for('auth.login'))
+
+    if admin_form.submit.data and admin_form.validate():
+        db = get_db()
+        hashed_password = generate_password_hash(admin_form.password.data)
+        
+        admin_data = {
+            "name": admin_form.name.data,
+            "email": admin_form.email.data,
+            "phone": admin_form.phone.data,
+            "password": hashed_password,
+            "profile_image": "default.png"
+        }
+        
+        db.admins.insert_one(admin_data)
+        flash('Admin Registration successful! You can now login.', 'success')
         return redirect(url_for('auth.login'))
         
-    return render_template('auth/register.html', form=form)
+    return render_template('auth/register.html', student_form=student_form, admin_form=admin_form)
 
 @auth_bp.route('/logout')
 @login_required

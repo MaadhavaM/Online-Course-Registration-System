@@ -7,6 +7,7 @@ from bson.objectid import ObjectId
 import csv
 from flask import Response
 import io
+import re
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -55,11 +56,15 @@ def manage_instructors():
     if request.method == 'POST':
         # Add new instructor
         instructor_id = request.form.get('instructor_id')
-        name = request.form.get('name')
+        name = request.form.get('name', '').strip()
         email = request.form.get('email')
         department = request.form.get('department')
         designation = request.form.get('designation')
         password = generate_password_hash(request.form.get('password'))
+        
+        if not re.match(r'^[A-Za-z\s]+$', name):
+            flash('Invalid name. Only alphabets and spaces are allowed.', 'danger')
+            return redirect(url_for('admin.manage_instructors'))
         
         if db.instructors.find_one({'instructor_id': instructor_id}) or db.instructors.find_one({'email': email}):
             flash('Instructor ID or Email already exists.', 'danger')
@@ -95,15 +100,24 @@ def manage_dept_cat():
     db = get_db()
     if request.method == 'POST':
         action = request.form.get('action')
-        name = request.form.get('name')
+        name = request.form.get('name', '').strip()
+        
+        if not re.match(r'^[A-Za-z\s]+$', name):
+            flash('Invalid name. Only alphabets and spaces are allowed.', 'danger')
+            return redirect(url_for('admin.manage_dept_cat'))
+            
         if action == 'add_dept':
             if not db.departments.find_one({'name': name}):
                 db.departments.insert_one({'name': name})
                 flash('Department added.', 'success')
+            else:
+                flash('Department already exists.', 'warning')
         elif action == 'add_cat':
             if not db.categories.find_one({'name': name}):
                 db.categories.insert_one({'name': name})
                 flash('Category added.', 'success')
+            else:
+                flash('Category already exists.', 'warning')
         return redirect(url_for('admin.manage_dept_cat'))
         
     departments = list(db.departments.find())

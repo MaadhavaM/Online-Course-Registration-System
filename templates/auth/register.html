@@ -1,105 +1,184 @@
 {% extends "base.html" %}
-{% block title %}Student Registration - UniCore{% endblock %}
+{% block title %}Registration - UniCore{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center align-items-center mt-4 mb-5">
     <div class="col-md-8 col-lg-6">
         <div class="card shadow-lg border-0 rounded-lg">
             <div class="card-header bg-success text-white text-center py-3">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-person-plus-fill"></i> Student Registration</h3>
+                <h3 class="mb-0 fw-bold"><i class="bi bi-person-plus-fill"></i> Registration</h3>
             </div>
             <div class="card-body p-4">
-                <form method="POST" action="">
-                    {{ form.hidden_tag() }}
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            {{ form.student_id.label(class="form-label fw-bold") }}
-                            {{ form.student_id(class="form-control", placeholder="e.g. CS2023001") }}
-                            {% if form.student_id.errors %}
-                                <div class="text-danger small mt-1">
-                                    {% for error in form.student_id.errors %}<span>{{ error }}</span>{% endfor %}
+                <!-- Navigation Tabs -->
+                <ul class="nav nav-tabs nav-fill mb-4" id="registerTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active fw-bold text-success" id="student-tab" data-bs-toggle="tab" data-bs-target="#student-register" type="button" role="tab" aria-controls="student-register" aria-selected="true">Student</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link fw-bold text-secondary" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin-register" type="button" role="tab" aria-controls="admin-register" aria-selected="false">Admin</button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content" id="registerTabsContent">
+                    <!-- Student Registration Tab -->
+                    <div class="tab-pane fade show active" id="student-register" role="tabpanel" aria-labelledby="student-tab">
+                        <form method="POST" action="">
+                            {{ student_form.hidden_tag() }}
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    {{ student_form.student_id.label(class="form-label fw-bold") }}
+                                    {{ student_form.student_id(class="form-control", placeholder="e.g. CS2023001") }}
+                                    {% if student_form.student_id.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in student_form.student_id.errors %}<span>{{ error }}</span>{% endfor %}
+                                        </div>
+                                    {% endif %}
                                 </div>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-6">
-                            {{ form.name.label(class="form-label fw-bold") }}
-                            {{ form.name(class="form-control", placeholder="Full Name") }}
-                            {% if form.name.errors %}
-                                <div class="text-danger small mt-1">
-                                    {% for error in form.name.errors %}<span>{{ error }}</span>{% endfor %}
+                                <div class="col-md-6">
+                                    {{ student_form.name.label(class="form-label fw-bold") }}
+                                    {{ student_form.name(class="form-control", placeholder="Full Name", pattern="[A-Za-z\\s]+", oninput="this.value = this.value.replace(/[^A-Za-z\\s]/g, '')", title="Only alphabets and spaces are allowed") }}
+                                    {% if student_form.name.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in student_form.name.errors %}<span>{{ error }}</span>{% endfor %}
+                                        </div>
+                                    {% endif %}
                                 </div>
-                            {% endif %}
-                        </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    {{ student_form.email.label(class="form-label fw-bold") }}
+                                    {{ student_form.email(class="form-control", placeholder="Email Address") }}
+                                    {% if student_form.email.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in student_form.email.errors %}<span>{{ error }}</span>{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ student_form.phone.label(class="form-label fw-bold") }}
+                                    {{ student_form.phone(class="form-control", placeholder="Phone Number", pattern="[0-9]*", type="tel", oninput="this.value = this.value.replace(/[^0-9]/g, '')") }}
+                                    {% if student_form.phone.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in student_form.phone.errors %}<span>{{ error }}</span>{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    {{ student_form.department.label(class="form-label fw-bold") }}
+                                    {{ student_form.department(class="form-select") }}
+                                    {% if student_form.department.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in student_form.department.errors %}<span>{{ error }}</span>{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ student_form.semester.label(class="form-label fw-bold") }}
+                                    {{ student_form.semester(class="form-select") }}
+                                    {% if student_form.semester.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in student_form.semester.errors %}<span>{{ error }}</span>{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    {{ student_form.password.label(class="form-label fw-bold") }}
+                                    {{ student_form.password(class="form-control", placeholder="Create Password") }}
+                                    {% if student_form.password.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in student_form.password.errors %}<span>{{ error }}</span>{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ student_form.confirm_password.label(class="form-label fw-bold") }}
+                                    {{ student_form.confirm_password(class="form-control", placeholder="Confirm Password") }}
+                                    {% if student_form.confirm_password.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in student_form.confirm_password.errors %}<span>{{ error }}</span>{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                {{ student_form.submit(class="btn btn-success btn-lg fw-bold") }}
+                            </div>
+                        </form>
                     </div>
                     
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            {{ form.email.label(class="form-label fw-bold") }}
-                            {{ form.email(class="form-control", placeholder="Email Address") }}
-                            {% if form.email.errors %}
-                                <div class="text-danger small mt-1">
-                                    {% for error in form.email.errors %}<span>{{ error }}</span>{% endfor %}
+                    <!-- Admin Registration Tab -->
+                    <div class="tab-pane fade" id="admin-register" role="tabpanel" aria-labelledby="admin-tab">
+                        <form method="POST" action="">
+                            {{ admin_form.hidden_tag() }}
+                            
+                            <div class="mb-3">
+                                {{ admin_form.name.label(class="form-label fw-bold") }}
+                                {{ admin_form.name(class="form-control", placeholder="Full Name", pattern="[A-Za-z\\s]+", oninput="this.value = this.value.replace(/[^A-Za-z\\s]/g, '')", title="Only alphabets and spaces are allowed") }}
+                                {% if admin_form.name.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in admin_form.name.errors %}<span>{{ error }}</span>{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    {{ admin_form.email.label(class="form-label fw-bold") }}
+                                    {{ admin_form.email(class="form-control", placeholder="Email Address") }}
+                                    {% if admin_form.email.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in admin_form.email.errors %}<span>{{ error }}</span>{% endfor %}
+                                        </div>
+                                    {% endif %}
                                 </div>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-6">
-                            {{ form.phone.label(class="form-label fw-bold") }}
-                            {{ form.phone(class="form-control", placeholder="Phone Number") }}
-                            {% if form.phone.errors %}
-                                <div class="text-danger small mt-1">
-                                    {% for error in form.phone.errors %}<span>{{ error }}</span>{% endfor %}
+                                <div class="col-md-6">
+                                    {{ admin_form.phone.label(class="form-label fw-bold") }}
+                                    {{ admin_form.phone(class="form-control", placeholder="Phone Number", pattern="[0-9]*", type="tel", oninput="this.value = this.value.replace(/[^0-9]/g, '')") }}
+                                    {% if admin_form.phone.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in admin_form.phone.errors %}<span>{{ error }}</span>{% endfor %}
+                                        </div>
+                                    {% endif %}
                                 </div>
-                            {% endif %}
-                        </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    {{ admin_form.password.label(class="form-label fw-bold") }}
+                                    {{ admin_form.password(class="form-control", placeholder="Create Password") }}
+                                    {% if admin_form.password.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in admin_form.password.errors %}<span>{{ error }}</span>{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ admin_form.confirm_password.label(class="form-label fw-bold") }}
+                                    {{ admin_form.confirm_password(class="form-control", placeholder="Confirm Password") }}
+                                    {% if admin_form.confirm_password.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in admin_form.confirm_password.errors %}<span>{{ error }}</span>{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                {{ admin_form.submit(class="btn btn-secondary btn-lg fw-bold") }}
+                            </div>
+                        </form>
                     </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            {{ form.department.label(class="form-label fw-bold") }}
-                            {{ form.department(class="form-select") }}
-                            {% if form.department.errors %}
-                                <div class="text-danger small mt-1">
-                                    {% for error in form.department.errors %}<span>{{ error }}</span>{% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-6">
-                            {{ form.semester.label(class="form-label fw-bold") }}
-                            {{ form.semester(class="form-select") }}
-                            {% if form.semester.errors %}
-                                <div class="text-danger small mt-1">
-                                    {% for error in form.semester.errors %}<span>{{ error }}</span>{% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            {{ form.password.label(class="form-label fw-bold") }}
-                            {{ form.password(class="form-control", placeholder="Create Password") }}
-                            {% if form.password.errors %}
-                                <div class="text-danger small mt-1">
-                                    {% for error in form.password.errors %}<span>{{ error }}</span>{% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-6">
-                            {{ form.confirm_password.label(class="form-label fw-bold") }}
-                            {{ form.confirm_password(class="form-control", placeholder="Confirm Password") }}
-                            {% if form.confirm_password.errors %}
-                                <div class="text-danger small mt-1">
-                                    {% for error in form.confirm_password.errors %}<span>{{ error }}</span>{% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    <div class="d-grid gap-2">
-                        {{ form.submit(class="btn btn-success btn-lg fw-bold") }}
-                    </div>
-                </form>
+                </div>
             </div>
             <div class="card-footer text-center py-3 bg-light">
                 <div class="small">
@@ -109,4 +188,26 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Add some script to change colors based on active tab to match the header
+    document.addEventListener('DOMContentLoaded', function() {
+        const studentTab = document.getElementById('student-tab');
+        const adminTab = document.getElementById('admin-tab');
+        
+        studentTab.addEventListener('click', function() {
+            this.classList.add('text-success');
+            this.classList.remove('text-secondary');
+            adminTab.classList.remove('text-success');
+            adminTab.classList.add('text-secondary');
+        });
+        
+        adminTab.addEventListener('click', function() {
+            this.classList.add('text-success');
+            this.classList.remove('text-secondary');
+            studentTab.classList.remove('text-success');
+            studentTab.classList.add('text-secondary');
+        });
+    });
+</script>
 {% endblock %}

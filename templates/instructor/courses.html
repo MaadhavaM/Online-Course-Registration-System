@@ -99,8 +99,8 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold">Duration (e.g. 12 Weeks)</label>
-                            <input type="text" class="form-control" name="duration" required>
+                            <label class="form-label fw-bold">Duration (Weeks)</label>
+                            <input type="text" class="form-control" name="duration" inputmode="numeric" pattern="\d+" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Capacity (Seats)</label>

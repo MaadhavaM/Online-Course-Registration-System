@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, SelectField, BooleanField
-from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
+from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError, Regexp
 from database.db import get_db
 
 class LoginForm(FlaskForm):
@@ -16,14 +16,14 @@ class LoginForm(FlaskForm):
 
 class StudentRegistrationForm(FlaskForm):
     student_id = StringField('Student ID', validators=[DataRequired(), Length(min=4, max=20)])
-    name = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=100)])
+    name = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=100), Regexp(r'^[A-Za-z\s]+$', message="Name must contain only alphabets and spaces.")])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    phone = StringField('Phone', validators=[DataRequired(), Length(min=10, max=15)])
+    phone = StringField('Phone', validators=[DataRequired(), Length(min=10, max=15), Regexp(r'^\d+$', message="Phone number must contain only digits.")])
     department = SelectField('Department', coerce=str, validators=[DataRequired()])
     semester = SelectField('Semester', choices=[(str(i), f'Semester {i}') for i in range(1, 9)], validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Register')
+    submit = SubmitField('Register Student')
 
     def __init__(self, *args, **kwargs):
         super(StudentRegistrationForm, self).__init__(*args, **kwargs)
@@ -42,3 +42,16 @@ class StudentRegistrationForm(FlaskForm):
         db = get_db()
         if db is not None and db.students.find_one({"student_id": student_id.data}):
             raise ValidationError('That Student ID is already registered. Please choose a different one.')
+
+class AdminRegistrationForm(FlaskForm):
+    name = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=100), Regexp(r'^[A-Za-z\s]+$', message="Name must contain only alphabets and spaces.")])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    phone = StringField('Phone', validators=[DataRequired(), Length(min=10, max=15), Regexp(r'^\d+$', message="Phone number must contain only digits.")])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Register Admin')
+
+    def validate_email(self, email):
+        db = get_db()
+        if db is not None and db.admins.find_one({"email": email.data}):
+            raise ValidationError('That email is already registered as an Admin. Please choose a different one.')
