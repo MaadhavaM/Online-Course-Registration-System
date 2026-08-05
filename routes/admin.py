@@ -48,6 +48,15 @@ def manage_students():
     students = list(db.students.find())
     return render_template('admin/students.html', students=students)
 
+@admin_bp.route('/delete_student/<student_id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_student(student_id):
+    db = get_db()
+    db.students.delete_one({'_id': ObjectId(student_id)})
+    flash('Student deleted successfully.', 'success')
+    return redirect(url_for('admin.manage_students'))
+
 @admin_bp.route('/instructors', methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -84,6 +93,36 @@ def manage_instructors():
     instructors = list(db.instructors.find())
     departments = list(db.departments.find())
     return render_template('admin/instructors.html', instructors=instructors, departments=departments)
+
+@admin_bp.route('/edit_instructor/<instructor_id>', methods=['POST'])
+@login_required
+@admin_required
+def edit_instructor(instructor_id):
+    db = get_db()
+    name = request.form.get('name', '').strip()
+    email = request.form.get('email')
+    department = request.form.get('department')
+    designation = request.form.get('designation')
+    
+    if not re.match(r'^[A-Za-z\s]+$', name):
+        flash('Invalid name. Only alphabets and spaces are allowed.', 'danger')
+        return redirect(url_for('admin.manage_instructors'))
+        
+    db.instructors.update_one(
+        {'_id': ObjectId(instructor_id)},
+        {'$set': {'name': name, 'email': email, 'department': department, 'designation': designation}}
+    )
+    flash('Instructor updated successfully.', 'success')
+    return redirect(url_for('admin.manage_instructors'))
+
+@admin_bp.route('/delete_instructor/<instructor_id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_instructor(instructor_id):
+    db = get_db()
+    db.instructors.delete_one({'_id': ObjectId(instructor_id)})
+    flash('Instructor deleted successfully.', 'success')
+    return redirect(url_for('admin.manage_instructors'))
 
 @admin_bp.route('/courses')
 @login_required
@@ -123,6 +162,24 @@ def manage_dept_cat():
     departments = list(db.departments.find())
     categories = list(db.categories.find())
     return render_template('admin/dept_cat.html', departments=departments, categories=categories)
+
+@admin_bp.route('/delete_dept/<dept_id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_dept(dept_id):
+    db = get_db()
+    db.departments.delete_one({'_id': ObjectId(dept_id)})
+    flash('Department deleted.', 'success')
+    return redirect(url_for('admin.manage_dept_cat'))
+
+@admin_bp.route('/delete_cat/<cat_id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_cat(cat_id):
+    db = get_db()
+    db.categories.delete_one({'_id': ObjectId(cat_id)})
+    flash('Category deleted.', 'success')
+    return redirect(url_for('admin.manage_dept_cat'))
 
 @admin_bp.route('/export/students')
 @login_required
