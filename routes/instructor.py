@@ -73,6 +73,51 @@ def manage_courses():
     categories = list(db.categories.find())
     return render_template('instructor/courses.html', courses=courses, categories=categories)
 
+@instructor_bp.route('/edit_course/<course_id>', methods=['POST'])
+@login_required
+@instructor_required
+def edit_course(course_id):
+    db = get_db()
+    instructor_id = current_user.user_data['instructor_id']
+    
+    course_data = {
+        'course_name': request.form.get('course_name'),
+        'description': request.form.get('description'),
+        'category': request.form.get('category'),
+        'credits': int(request.form.get('credits')),
+        'duration': request.form.get('duration'),
+        'capacity': int(request.form.get('capacity')),
+    }
+    
+    result = db.courses.update_one(
+        {'_id': ObjectId(course_id), 'instructor_id': instructor_id},
+        {'$set': course_data}
+    )
+    
+    if result.modified_count > 0:
+        flash('Course updated successfully.', 'success')
+    else:
+        flash('Failed to update course or no changes made.', 'warning')
+        
+    return redirect(url_for('instructor.manage_courses'))
+
+@instructor_bp.route('/delete_course/<course_id>', methods=['POST'])
+@login_required
+@instructor_required
+def delete_course(course_id):
+    db = get_db()
+    instructor_id = current_user.user_data['instructor_id']
+    
+    result = db.courses.delete_one({'_id': ObjectId(course_id), 'instructor_id': instructor_id})
+    
+    if result.deleted_count > 0:
+        flash('Course deleted successfully.', 'success')
+    else:
+        flash('Failed to delete course or unauthorized.', 'danger')
+        
+    return redirect(url_for('instructor.manage_courses'))
+
+
 @instructor_bp.route('/assignments', methods=['GET', 'POST'])
 @login_required
 @instructor_required
