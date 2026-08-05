@@ -7,16 +7,13 @@
     /* Premium landing page styling */
     .hero-section {
         position: relative;
-        min-height: 85vh;
+        min-height: 70vh;
         display: flex;
         align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        margin-top: -1.5rem; /* Pull up under the navbar slightly */
-        background: linear-gradient(-45deg, #9D50BB, #6E48AA, #8E2DE2, #4A00E0);
-        background-size: 400% 400%;
-        animation: gradientBG 15s ease infinite;
+        background-color: #1a0b2e; /* Very dark rich violet */
         color: white;
+        padding: 4rem 0;
+        margin-top: -1.5rem;
     }
 
     @keyframes gradientBG {
@@ -28,19 +25,9 @@
     .hero-content {
         position: relative;
         z-index: 10;
-        text-align: center;
-        padding: 4rem 3rem;
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 2rem;
-        max-width: 850px;
-        width: 95%;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-        transform: translateY(20px);
+        max-width: 600px;
+        animation: slideUpFade 1s forwards ease-out 0.2s;
         opacity: 0;
-        animation: slideUpFade 1s forwards ease-out 0.5s;
     }
 
     @keyframes slideUpFade {
@@ -51,43 +38,49 @@
     }
 
     .hero-title {
-        font-size: 4rem;
+        font-size: 4.5rem;
         font-weight: 800;
         margin-bottom: 1.5rem;
         letter-spacing: -1px;
         color: #ffffff;
-        text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        line-height: 1.1;
     }
 
     .hero-subtitle {
-        font-size: 1.3rem;
+        font-size: 1.25rem;
         font-weight: 400;
         margin-bottom: 3rem;
         line-height: 1.6;
-        color: rgba(255, 255, 255, 0.95);
+        color: #d1c4e9; /* Light purple gray */
     }
 
-    .btn-premium {
-        background: #ffffff;
-        color: #6a11cb;
+    .btn-hero {
+        background: #8E2DE2;
+        color: white;
         font-weight: 600;
-        padding: 0.8rem 2.5rem;
-        border-radius: 50px;
-        border: none;
+        padding: 1rem 2rem;
+        border-radius: 0.5rem;
         font-size: 1.1rem;
-        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
     }
 
-    .btn-premium:hover {
-        transform: translateY(-3px) scale(1.05);
-        box-shadow: 0 8px 25px rgba(255, 255, 255, 0.4);
-        color: #2e59d9;
+    .btn-hero:hover {
+        background: #7322b8;
+        color: white;
+    }
+    
+    .hero-graphic {
+        position: absolute;
+        right: 5%;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 400px;
+        height: 400px;
+        background: linear-gradient(135deg, rgba(142,45,226,0.2) 0%, rgba(74,0,224,0.05) 100%);
+        border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        z-index: 1;
     }
     
     .btn-outline-premium {
@@ -175,35 +168,32 @@
 
 </style>
 
-<!-- Hero Section (Full Width) -->
+<!-- Hero Section -->
 <div class="hero-section">
-        <div class="floating-shapes">
-            <!-- Generating some background shapes -->
-            <div class="shape" style="width: 100px; height: 100px; left: 10%; animation-duration: 25s; animation-delay: 0s;"></div>
-            <div class="shape" style="width: 150px; height: 150px; left: 30%; animation-duration: 20s; animation-delay: -5s;"></div>
-            <div class="shape" style="width: 80px; height: 80px; left: 60%; animation-duration: 15s; animation-delay: -10s;"></div>
-            <div class="shape" style="width: 200px; height: 200px; left: 80%; animation-duration: 30s; animation-delay: -2s;"></div>
-            <div class="shape" style="width: 120px; height: 120px; left: 50%; animation-duration: 22s; animation-delay: -15s;"></div>
-        </div>
-
-        <div class="hero-content">
-            <h1 class="hero-title">Experience the Future of Learning</h1>
-            <p class="hero-subtitle">
-                UniCore provides a seamless, dynamic, and intuitive platform for students and instructors to connect. Discover courses, manage your schedule, and elevate your academic journey.
-            </p>
-            <div class="d-flex justify-content-center gap-3 flex-wrap">
-                {% if not current_user.is_authenticated %}
-                <a href="{{ url_for('auth.login') }}" class="btn-premium">
-                    <i class="bi bi-box-arrow-in-right"></i> Sign In
-                </a>
-                <a href="{{ url_for('auth.register') }}" class="btn-outline-premium">
-                    <i class="bi bi-person-plus"></i> Register
-                </a>
-                {% else %}
-                <a href="{{ url_for('auth.login') }}" class="btn-premium">
-                    <i class="bi bi-speedometer2"></i> Go to Dashboard
-                </a>
-                {% endif %}
+    <div class="container position-relative h-100">
+        <div class="hero-graphic"></div>
+        <div class="row align-items-center h-100">
+            <div class="col-lg-7">
+                <div class="hero-content">
+                    <h1 class="hero-title">Skills that start careers</h1>
+                    <p class="hero-subtitle">
+                        UniCore provides a seamless, dynamic platform for students and instructors to connect. Discover courses, manage your schedule, and elevate your academic journey today.
+                    </p>
+                    <div class="d-flex gap-3">
+                        {% if not current_user.is_authenticated %}
+                        <a href="{{ url_for('auth.register') }}" class="btn-hero">
+                            Join for Free
+                        </a>
+                        <a href="{{ url_for('auth.login') }}" class="btn-hero" style="background: transparent; border: 1px solid white;">
+                            Log In
+                        </a>
+                        {% else %}
+                        <a href="{{ url_for('auth.login') }}" class="btn-hero">
+                            Go to Dashboard
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -212,9 +202,9 @@
 <div class="container pb-5">
     <!-- Features Section -->
     <div class="features-section mt-5">
-        <div class="text-center mb-5 fade-in">
-            <h2 class="fw-bold" style="color: #2c3e50;">Why Choose UniCore?</h2>
-            <p class="text-muted">A powerful platform designed for modern education.</p>
+        <div class="mb-5 fade-in">
+            <h2 class="fw-bold" style="color: #2D2F31; font-size: 2rem;">Why Choose UniCore?</h2>
+            <p class="text-muted fs-5">Learn from the best and accelerate your goals.</p>
         </div>
         <div class="row g-4">
             <div class="col-md-4 fade-in" style="animation-delay: 0.1s;">

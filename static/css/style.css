@@ -11,8 +11,19 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
 }
 
 .navbar {
-    background: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%) !important;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    background: #ffffff !important;
+    border-bottom: 1px solid rgba(0,0,0,0.08) !important;
+}
+
+.nav-hover {
+    transition: color 0.2s ease;
+}
+.nav-hover:hover {
+    color: #8E2DE2 !important;
+}
+
+.profile-btn:hover {
+    background-color: #f8fafc !important;
 }
 
 .navbar-brand {
@@ -80,15 +91,30 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%);
+    background: #8E2DE2;
     border: none;
-    box-shadow: 0 4px 15px rgba(37, 117, 252, 0.3);
+    box-shadow: 0 4px 15px rgba(142, 45, 226, 0.3);
+    color: white;
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #4A00E0 0%, #8E2DE2 100%);
-    box-shadow: 0 6px 20px rgba(37, 117, 252, 0.4);
+    background: #7322b8;
+    box-shadow: 0 6px 20px rgba(142, 45, 226, 0.4);
     transform: translateY(-2px);
+    color: white;
+}
+
+.bg-purple {
+    background-color: #8E2DE2 !important;
+}
+
+.btn-purple-hover {
+    transition: all 0.2s ease;
+}
+
+.btn-purple-hover:hover {
+    background-color: #7322b8 !important;
+    color: white !important;
 }
 
 .btn-success {
