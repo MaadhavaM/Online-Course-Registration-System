@@ -38,8 +38,8 @@
                             <li class="nav-item me-3"><a class="nav-link text-dark fw-medium nav-hover px-3" href="{{ url_for('admin.manage_instructors') }}">Instructors</a></li>
                             <li class="nav-item me-3"><a class="nav-link text-dark fw-medium nav-hover px-3" href="{{ url_for('admin.manage_dept_cat') }}">Depts/Cats</a></li>
                         {% elif current_user.role == 'instructor' %}
-                            <li class="nav-item me-3"><a class="nav-link text-dark fw-medium nav-hover px-3" href="{{ url_for('instructor.dashboard') }}">Dashboard</a></li>
                             <li class="nav-item me-3"><a class="nav-link text-dark fw-medium nav-hover px-3" href="{{ url_for('instructor.manage_courses') }}">My Courses</a></li>
+                            <li class="nav-item me-3"><a class="nav-link text-dark fw-medium nav-hover px-3" href="{{ url_for('instructor.dashboard') }}">Dashboard</a></li>
                         {% else %}
                             <li class="nav-item me-3"><a class="nav-link text-dark fw-medium nav-hover px-3" href="{{ url_for('student.browse_courses') }}">Browse Courses</a></li>
                             <li class="nav-item me-3"><a class="nav-link text-dark fw-medium nav-hover px-3" href="{{ url_for('student.dashboard') }}">Dashboard</a></li>
