@@ -46,10 +46,10 @@
                     <div>
                         <span class="badge bg-secondary">{{ course.course_code }}</span>
                         {% if course.course_code in my_enrollments %}
-                            <i class="bi bi-check-circle-fill text-success ms-1" title="Registered"></i>
+                            <span class="text-success ms-2 fw-bold small"><i class="bi bi-check-circle-fill"></i> Registered</span>
                         {% endif %}
                     </div>
-                    <span class="badge bg-info text-dark">{{ course.category }}</span>
+                    <span class="badge bg-primary text-white">{{ course.category }}</span>
                 </div>
                 <h5 class="card-title fw-bold text-primary">{{ course.course_name }}</h5>
                 <p class="card-text text-muted small">{{ course.description[:100] }}{% if course.description|length > 100 %}...{% endif %}</p>

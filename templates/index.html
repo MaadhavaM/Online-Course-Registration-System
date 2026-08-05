@@ -194,14 +194,14 @@
 <div class="hero-section">
     <div class="container position-relative h-100">
         <div class="hero-graphic"></div>
-        <div class="row align-items-center h-100">
-            <div class="col-lg-7">
-                <div class="hero-content">
+        <div class="row align-items-center h-100 justify-content-center text-center">
+            <div class="col-lg-8">
+                <div class="hero-content mx-auto">
                     <h1 class="hero-title">Skills that start careers</h1>
                     <p class="hero-subtitle">
                         UniCore provides a seamless, dynamic platform for students and instructors to connect. Discover courses, manage your schedule, and elevate your academic journey today.
                     </p>
-                    <div class="d-flex gap-3">
+                    <div class="d-flex gap-3 justify-content-center">
                         {% if not current_user.is_authenticated %}
                         <a href="{{ url_for('auth.register') }}" class="btn-hero">
                             Join for Free

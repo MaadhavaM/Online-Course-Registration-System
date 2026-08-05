@@ -41,8 +41,8 @@
                             <li class="nav-item me-3"><a class="nav-link text-dark fw-medium nav-hover" href="{{ url_for('instructor.dashboard') }}">Dashboard</a></li>
                             <li class="nav-item me-3"><a class="nav-link text-dark fw-medium nav-hover" href="{{ url_for('instructor.manage_courses') }}">My Courses</a></li>
                         {% else %}
-                            <li class="nav-item me-3"><a class="nav-link text-dark fw-medium nav-hover" href="{{ url_for('student.dashboard') }}">Dashboard</a></li>
                             <li class="nav-item me-3"><a class="nav-link text-dark fw-medium nav-hover" href="{{ url_for('student.browse_courses') }}">Browse Courses</a></li>
+                            <li class="nav-item me-3"><a class="nav-link text-dark fw-medium nav-hover" href="{{ url_for('student.dashboard') }}">Dashboard</a></li>
                         {% endif %}
                         <li class="nav-item dropdown ms-2">
                             <a class="nav-link dropdown-toggle text-dark border fw-bold px-4 py-2 rounded-pill profile-btn" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
