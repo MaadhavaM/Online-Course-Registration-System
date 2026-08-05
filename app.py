@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, send_from_directory
 from flask_login import LoginManager
 from config import Config
 from database.db import init_db
@@ -35,6 +35,10 @@ def create_app(config_class=Config):
     @app.route('/')
     def index():
         return render_template('index.html')
+
+    @app.route('/uploads/<path:filename>')
+    def download_file(filename):
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
 
     return app
 
