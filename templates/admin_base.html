@@ -112,6 +112,9 @@
             <a href="{{ url_for('admin.manage_courses') }}" class="{% if request.endpoint == 'admin.manage_courses' %}active{% endif %}">
                 <i class="bi bi-journal-bookmark"></i> Courses
             </a>
+            <a href="{{ url_for('admin.manage_admins') }}" class="{% if request.endpoint == 'admin.manage_admins' %}active{% endif %}">
+                <i class="bi bi-shield-lock-fill"></i> Admins
+            </a>
         </div>
     </div>
 

@@ -181,6 +181,52 @@ def delete_cat(cat_id):
     flash('Category deleted.', 'success')
     return redirect(url_for('admin.manage_dept_cat'))
 
+@admin_bp.route('/admins', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def manage_admins():
+    db = get_db()
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        email = request.form.get('email', '').strip()
+        phone = request.form.get('phone', '').strip()
+        password_raw = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+
+        if not re.match(r'^[A-Za-z\s]+$', name):
+            flash('Invalid name. Only alphabets and spaces are allowed.', 'danger')
+        elif password_raw != confirm_password:
+            flash('Passwords do not match.', 'danger')
+        elif len(password_raw) < 6:
+            flash('Password must be at least 6 characters.', 'danger')
+        elif db.admins.find_one({'email': email}):
+            flash('An admin with this email already exists.', 'danger')
+        else:
+            db.admins.insert_one({
+                'name': name,
+                'email': email,
+                'phone': phone,
+                'password': generate_password_hash(password_raw)
+            })
+            flash('New admin account created successfully.', 'success')
+            return redirect(url_for('admin.manage_admins'))
+            
+    admins = list(db.admins.find())
+    return render_template('admin/admins.html', admins=admins)
+
+@admin_bp.route('/delete_admin/<admin_id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_admin(admin_id):
+    db = get_db()
+    # Prevent the last admin from being deleted, or prevent deleting oneself
+    if str(current_user.id) == admin_id:
+        flash('You cannot delete your own admin account.', 'danger')
+    else:
+        db.admins.delete_one({'_id': ObjectId(admin_id)})
+        flash('Admin deleted successfully.', 'success')
+    return redirect(url_for('admin.manage_admins'))
+
 @admin_bp.route('/export/students')
 @login_required
 @admin_required
