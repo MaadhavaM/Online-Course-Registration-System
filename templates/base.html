@@ -15,66 +15,87 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
     
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 border-bottom">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand fw-bold fs-3" href="{{ url_for('index') }}" style="color: #2D2F31;">
-                <i class="bi bi-mortarboard-fill me-2" style="color: #8E2DE2;"></i>UniCore
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 border-bottom sticky-top">
+        <div class="container-fluid px-3 px-lg-4">
+            
+            <!-- Mobile Toggle (Left) -->
+            <button class="navbar-toggler me-2 border-0 shadow-none px-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNav" aria-controls="offcanvasNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <!-- Search Bar -->
-                {% if request.endpoint not in ['auth.login', 'auth.register'] and not (current_user.is_authenticated and current_user.role != 'student') %}
-                <form class="d-flex mx-lg-4 my-2 my-lg-0 flex-grow-1" style="max-width: 600px;" action="{{ url_for('student.browse_courses') }}" method="GET">
-                    <div class="input-group">
-                        <span class="input-group-text bg-white border-end-0 text-muted rounded-start-pill ps-4 py-2"><i class="bi bi-search"></i></span>
-                        <input class="form-control border-start-0 rounded-end-pill py-2 bg-white" type="search" name="search" placeholder="What do you want to learn?" aria-label="Search">
+
+            <!-- Brand (Left/Center) -->
+            <a class="navbar-brand fw-bold fs-3 me-auto" href="{{ url_for('index') }}" style="color: #2D2F31;">
+                <i class="bi bi-mortarboard-fill me-2" style="color: #8E2DE2;"></i>UniCore
+            </a>
+
+            <!-- User Actions (Always visible on Right) -->
+            <div class="d-flex align-items-center order-lg-3">
+                {% if current_user.is_authenticated %}
+                    <div class="dropdown ms-2">
+                        <a class="nav-link dropdown-toggle text-dark border fw-bold px-3 py-2 rounded-pill profile-btn d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle fs-5 me-1" style="color: #8E2DE2;"></i>
+                            <span class="d-none d-sm-inline ms-1">Profile</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" aria-labelledby="profileDropdown">
+                            <li>
+                                {% if current_user.role == 'admin' %}
+                                    <a class="dropdown-item py-2" href="{{ url_for('admin.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                                {% elif current_user.role == 'instructor' %}
+                                    <a class="dropdown-item py-2" href="{{ url_for('instructor.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                                {% else %}
+                                    <a class="dropdown-item py-2" href="{{ url_for('student.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                                {% endif %}
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item py-2 text-danger" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                        </ul>
                     </div>
-                </form>
                 {% else %}
-                <div class="mx-lg-4 my-2 my-lg-0 flex-grow-1"></div>
+                    <a class="btn btn-outline-dark fw-bold px-3 py-1 rounded me-2 d-none d-sm-inline-block" href="{{ url_for('auth.login') }}">Log in</a>
+                    <a class="btn text-white bg-purple fw-bold px-3 py-1 rounded btn-purple-hover" href="{{ url_for('auth.register') }}">Sign up</a>
+                    <!-- Mobile only login icon -->
+                    <a class="btn btn-outline-dark fw-bold px-2 py-1 rounded d-sm-none me-1" href="{{ url_for('auth.login') }}" title="Log in"><i class="bi bi-box-arrow-in-right"></i></a>
                 {% endif %}
-                <ul class="navbar-nav ms-auto align-items-center fs-5">
-                    {% if current_user.is_authenticated %}
-                        {% if current_user.role == 'admin' %}
-                            <li class="nav-item me-3"><a class="nav-link text-white bg-purple fw-bold px-4 py-2 rounded btn-purple-hover" href="{{ url_for('admin.dashboard') }}">Admin Panel</a></li>
-                        {% elif current_user.role == 'instructor' %}
-                            <li class="nav-item me-3"><a class="nav-link text-dark fw-medium nav-hover px-3" href="{{ url_for('instructor.manage_quizzes') }}">Quizzes</a></li>
-                            <li class="nav-item me-3"><a class="nav-link text-dark fw-medium nav-hover px-3" href="{{ url_for('instructor.manage_courses') }}">My Courses</a></li>
-                            <li class="nav-item me-3"><a class="nav-link text-dark fw-medium nav-hover px-3" href="{{ url_for('instructor.dashboard') }}">Dashboard</a></li>
-                        {% else %}
-                            <li class="nav-item me-3"><a class="nav-link text-dark fw-medium nav-hover px-3" href="{{ url_for('student.browse_courses') }}">Browse Courses</a></li>
-                            <li class="nav-item me-3"><a class="nav-link text-dark fw-medium nav-hover px-3" href="{{ url_for('student.dashboard') }}">Dashboard</a></li>
-                        {% endif %}
-                        <li class="nav-item dropdown ms-2">
-                            <a class="nav-link dropdown-toggle text-dark border fw-bold px-4 py-2 rounded-pill profile-btn" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-person-circle fs-5 me-1 align-middle" style="color: #8E2DE2;"></i> <span class="align-middle">Profile</span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    {% if current_user.role == 'admin' %}
-                                        <a class="dropdown-item" href="{{ url_for('admin.dashboard') }}">Dashboard</a>
-                                    {% elif current_user.role == 'instructor' %}
-                                        <a class="dropdown-item" href="{{ url_for('instructor.dashboard') }}">Dashboard</a>
-                                    {% else %}
-                                        <a class="dropdown-item" href="{{ url_for('student.dashboard') }}">Dashboard</a>
-                                    {% endif %}
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a></li>
-                            </ul>
-                        </li>
-                    {% else %}
-                        <li class="nav-item me-3">
-                            <a class="nav-link text-dark fw-bold px-3 py-2 border border-dark rounded" href="{{ url_for('auth.login') }}">Log in</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white bg-purple fw-bold px-4 py-2 rounded btn-purple-hover" href="{{ url_for('auth.register') }}">Sign up</a>
-                        </li>
-                    {% endif %}
-                </ul>
             </div>
+
+            <!-- Offcanvas Menu (Left) -->
+            <div class="offcanvas offcanvas-start order-lg-2 flex-grow-1" tabindex="-1" id="offcanvasNav" aria-labelledby="offcanvasNavLabel">
+                <div class="offcanvas-header border-bottom">
+                    <h5 class="offcanvas-title fw-bold" id="offcanvasNavLabel" style="color: #2D2F31;">
+                        <i class="bi bi-mortarboard-fill me-2" style="color: #8E2DE2;"></i>UniCore
+                    </h5>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <!-- Search Bar -->
+                    {% if request.endpoint not in ['auth.login', 'auth.register'] and not (current_user.is_authenticated and current_user.role != 'student') %}
+                    <form class="d-flex mx-lg-4 my-3 my-lg-0 flex-grow-1" style="max-width: 600px;" action="{{ url_for('student.browse_courses') }}" method="GET">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted rounded-start-pill ps-3 py-2"><i class="bi bi-search"></i></span>
+                            <input class="form-control border-start-0 rounded-end-pill py-2 bg-light shadow-none" type="search" name="search" placeholder="What do you want to learn?" aria-label="Search">
+                        </div>
+                    </form>
+                    {% else %}
+                    <div class="mx-lg-4 my-2 my-lg-0 flex-grow-1"></div>
+                    {% endif %}
+                    
+                    <ul class="navbar-nav ms-auto align-items-lg-center fs-6 fw-medium">
+                        {% if current_user.is_authenticated %}
+                            {% if current_user.role == 'admin' %}
+                                <li class="nav-item mb-2 mb-lg-0 me-lg-3"><a class="nav-link text-white bg-purple fw-bold px-4 py-2 rounded text-center btn-purple-hover" href="{{ url_for('admin.dashboard') }}">Admin Panel</a></li>
+                            {% elif current_user.role == 'instructor' %}
+                                <li class="nav-item mb-2 mb-lg-0 me-lg-3"><a class="nav-link text-dark nav-hover px-3 py-2 rounded" href="{{ url_for('instructor.manage_quizzes') }}">Quizzes</a></li>
+                                <li class="nav-item mb-2 mb-lg-0 me-lg-3"><a class="nav-link text-dark nav-hover px-3 py-2 rounded" href="{{ url_for('instructor.manage_courses') }}">My Courses</a></li>
+                                <li class="nav-item mb-2 mb-lg-0 me-lg-3"><a class="nav-link text-dark nav-hover px-3 py-2 rounded" href="{{ url_for('instructor.dashboard') }}">Dashboard</a></li>
+                            {% else %}
+                                <li class="nav-item mb-2 mb-lg-0 me-lg-3"><a class="nav-link text-dark nav-hover px-3 py-2 rounded" href="{{ url_for('student.browse_courses') }}">Browse Courses</a></li>
+                                <li class="nav-item mb-2 mb-lg-0 me-lg-3"><a class="nav-link text-dark nav-hover px-3 py-2 rounded" href="{{ url_for('student.dashboard') }}">Dashboard</a></li>
+                            {% endif %}
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            
         </div>
     </nav>
 
