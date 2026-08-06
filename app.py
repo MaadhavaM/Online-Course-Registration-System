@@ -53,6 +53,21 @@ def create_app(config_class=Config):
             print(f"Error downloading file: {e}")
             abort(404)
 
+    @app.route('/view_file_raw/<file_id>')
+    def view_file_raw(file_id):
+        fs = get_fs()
+        try:
+            grid_out = fs.get(ObjectId(file_id))
+            return send_file(
+                io.BytesIO(grid_out.read()),
+                mimetype=grid_out.content_type,
+                as_attachment=False,
+                download_name=grid_out.filename
+            )
+        except Exception as e:
+            print(f"Error viewing file: {e}")
+            abort(404)
+
     return app
 
 app = create_app()

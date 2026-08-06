@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{{ assignment.title }} - UniCore{% endblock %}
+
+{% block content %}
+<div class="row mb-3 align-items-center">
+    <div class="col">
+        <h3 class="fw-bold mb-0 text-dark">{{ assignment.title }}</h3>
+        <p class="text-muted mb-0">Course: {{ assignment.course_code }}</p>
+    </div>
+    <div class="col-auto">
+        <a href="{{ url_for('student.view_materials', course_code=assignment.course_code) }}" class="btn btn-outline-secondary rounded-pill fw-bold px-3">
+            <i class="bi bi-arrow-left"></i> Back to Materials
+        </a>
+        <a href="{{ url_for('download_file', file_id=assignment.file_id) }}" class="btn btn-primary rounded-pill fw-bold px-3 ms-2">
+            <i class="bi bi-download"></i> Download
+        </a>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 h-100">
+    <div class="card-body p-0" style="height: 75vh;">
+        <iframe src="{{ url_for('view_file_raw', file_id=assignment.file_id) }}#toolbar=0&navpanes=0&scrollbar=0&view=FitH" width="100%" height="100%" style="border: none; border-radius: 8px;">
+            This browser does not support inline PDFs. Please download the PDF to view it.
+        </iframe>
+    </div>
+</div>
+{% endblock %}

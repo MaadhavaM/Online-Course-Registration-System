@@ -69,7 +69,8 @@
                     <tr>
                         <th>Course Code</th>
                         <th>Course Name</th>
-                        <th>Credits</th>
+                        <th>Overall Grade</th>
+                        <th>Credits Earned</th>
                         <th>Status</th>
                         <th>Registration Date</th>
                         <th>Course Material</th>
@@ -77,30 +78,36 @@
                 </thead>
                 <tbody>
                     {% for course in courses %}
-                        {% set enrollment = enrollments | selectattr('course_code', 'equalto', course.course_code) | first %}
+                        {% set enroll = enrollments | selectattr('course_code', 'equalto', course.course_code) | first %}
                         <tr>
                             <td><span class="badge bg-secondary">{{ course.course_code }}</span></td>
                             <td class="fw-bold">{{ course.course_name }}</td>
-                            <td>{{ course.credits }}</td>
+                            {% set avg = grades_by_course.get(course.course_code, 0) %}
                             <td>
-                                {% if enrollment.status == 'Registered' %}
-                                    <span class="badge bg-primary">Registered</span>
-                                {% elif enrollment.status == 'Completed' %}
-                                    <span class="badge bg-success">Completed</span>
+                                <span class="badge bg-info fw-bold">{{ avg|round(1) }}%</span>
+                            </td>
+                            <td>
+                                {% if enroll.status == 'Completed' %}
+                                    <span class="fw-bold text-success">{{ (course.credits * (1.0 if avg >= 90 else 0.75 if avg >= 75 else 0.50 if avg >= 60 else 0.25 if avg >= 50 else 0)) | round(1) }} / {{ course.credits }}</span>
                                 {% else %}
-                                    <span class="badge bg-warning text-dark">{{ enrollment.status }}</span>
+                                    <span class="text-muted">0 / {{ course.credits }}</span>
                                 {% endif %}
                             </td>
-                            <td>{{ enrollment.registration_date.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if enroll.status == 'Completed' else 'primary' }}">
+                                    {{ enroll.status }}
+                                </span>
+                            </td>
+                            <td>{{ enroll.registration_date.strftime('%Y-%m-%d') }}</td>
                             <td>
                                 <a href="{{ url_for('student.view_materials', course_code=course.course_code) }}" class="btn btn-sm btn-primary fw-bold px-3 rounded-pill">
-                                    <i class="bi bi-file-earmark-arrow-down"></i> Go to Materials
+                                    <i class="bi bi-journal-text me-1"></i> Go to Materials
                                 </a>
                             </td>
                         </tr>
                     {% else %}
                         <tr>
-                            <td colspan="6" class="text-center py-4">
+                            <td colspan="7" class="text-center py-4">
                                 <p class="text-muted mb-2">You are not registered for any courses yet.</p>
                                 <a href="{{ url_for('student.browse_courses') }}" class="btn btn-primary">Find Courses to Register</a>
                             </td>

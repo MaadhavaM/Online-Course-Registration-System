@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Grade Assignments - {{ course.course_code }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold mb-0">Grade Assignments: {{ course.course_code }}</h2>
+        <p class="text-muted">{{ course.course_name }}</p>
+    </div>
+    <div class="col-auto">
+        <a href="{{ url_for('instructor.manage_assignments') }}" class="btn btn-outline-secondary rounded-pill px-4 fw-bold">Back to Assignments</a>
+    </div>
+</div>
+
+{% if not assignments %}
+<div class="alert alert-info">
+    <i class="bi bi-info-circle me-2"></i> No assignments have been created for this course yet.
+</div>
+{% else %}
+    <div class="accordion" id="assignmentsAccordion">
+        {% for assignment in assignments %}
+            {% set aid = assignment._id|string %}
+            {% set subs = subs_by_assignment.get(aid, []) %}
+            <div class="accordion-item shadow-sm border-0 mb-3 rounded overflow-hidden">
+                <h2 class="accordion-header" id="heading-{{ aid }}">
+                    <button class="accordion-button {% if loop.index > 1 %}collapsed{% endif %} bg-white text-dark fw-bold fs-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ aid }}" aria-expanded="{% if loop.index == 1 %}true{% else %}false{% endif %}" aria-controls="collapse-{{ aid }}">
+                        {{ assignment.title }}
+                        <span class="badge bg-primary ms-3 rounded-pill">{{ subs|length }} Submissions</span>
+                    </button>
+                </h2>
+                <div id="collapse-{{ aid }}" class="accordion-collapse collapse {% if loop.index == 1 %}show{% endif %}" aria-labelledby="heading-{{ aid }}" data-bs-parent="#assignmentsAccordion">
+                    <div class="accordion-body p-0">
+                        {% if not subs %}
+                            <div class="p-4 text-center text-muted">
+                                <i class="bi bi-inbox fs-2 mb-2 d-block"></i>
+                                No students have submitted this assignment yet.
+                            </div>
+                        {% else %}
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="ps-4">Student</th>
+                                            <th>Submitted At</th>
+                                            <th>File</th>
+                                            <th>Status</th>
+                                            <th class="pe-4 text-end">Grade</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for sub in subs %}
+                                            {% set student = student_map.get(sub.student_id, {}) %}
+                                            <tr>
+                                                <td class="ps-4">
+                                                    <strong>{{ student.name }}</strong><br>
+                                                    <small class="text-muted">{{ sub.student_id }}</small>
+                                                </td>
+                                                <td>{{ sub.submission_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                                                <td>
+                                                    <a href="{{ url_for('download_file', file_id=sub.file_id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                                        <i class="bi bi-download"></i> {{ sub.filename }}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    {% if sub.score is not none %}
+                                                        <span class="badge bg-success">Graded</span>
+                                                    {% else %}
+                                                        <span class="badge bg-warning text-dark">Needs Grading</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td class="pe-4 text-end">
+                                                    <form action="{{ url_for('instructor.submit_grade', submission_id=sub._id) }}" method="POST" class="d-flex justify-content-end align-items-center">
+                                                        <div class="input-group input-group-sm" style="width: 150px;">
+                                                            <input type="number" name="score" class="form-control text-center" placeholder="0-100" min="0" max="100" value="{{ sub.score if sub.score is not none else '' }}" required>
+                                                            <button class="btn btn-{% if sub.score is not none %}success{% else %}primary{% endif %}" type="submit">
+                                                                {% if sub.score is not none %}Update{% else %}Save{% endif %}
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}

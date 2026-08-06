@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Quiz Result - UniCore{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5 fade-in">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-lg border-0 rounded-lg text-center">
+            <div class="card-header bg-{{ 'success' if submission.status == 'Pass' else 'danger' }} text-white py-4">
+                <i class="bi bi-{{ 'trophy-fill' if submission.status == 'Pass' else 'x-circle-fill' }} display-1"></i>
+                <h3 class="mt-3 fw-bold">{{ 'Congratulations!' if submission.status == 'Pass' else 'Keep Trying!' }}</h3>
+            </div>
+            <div class="card-body p-5">
+                <h4 class="mb-4">You have completed the quiz for <strong>{{ course.course_code }}</strong></h4>
+                
+                <div class="row justify-content-center mb-4">
+                    <div class="col-6">
+                        <div class="p-3 border rounded bg-light">
+                            <div class="text-muted text-uppercase fw-bold mb-1 fs-6">Your Score</div>
+                            <div class="h2 fw-bold text-{{ 'success' if submission.status == 'Pass' else 'danger' }}">{{ submission.score_percentage | round(1) }}%</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 border rounded bg-light">
+                            <div class="text-muted text-uppercase fw-bold mb-1 fs-6">Credits Earned</div>
+                            <div class="h2 fw-bold text-info">{{ submission.earned_credits }} <span class="fs-6 text-muted fw-normal">/ {{ course.credits }}</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="text-muted fs-5 mb-5">
+                    {% if submission.score_percentage >= 90 %}
+                        Outstanding! You earned full credits for this course.
+                    {% elif submission.score_percentage >= 75 %}
+                        Great job! You earned 75% of the course credits.
+                    {% elif submission.score_percentage >= 60 %}
+                        Good effort! You earned 50% of the course credits.
+                    {% elif submission.score_percentage >= 50 %}
+                        You passed and earned 25% of the course credits.
+                    {% else %}
+                        Unfortunately, you did not pass. You need at least 50% to earn credits. Don't worry, you can always retake the quiz!
+                    {% endif %}
+                </p>
+                
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('student.dashboard') }}" class="btn btn-primary btn-lg fw-bold rounded-pill">
+                        <i class="bi bi-house-door"></i> Return to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

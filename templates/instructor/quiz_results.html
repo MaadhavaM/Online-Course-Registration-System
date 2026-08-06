@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Quiz Results - UniCore{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-md-8">
+        <h2 class="fw-bold">Results: {{ quiz.title }}</h2>
+        <p class="text-muted mb-0">Course: {{ quiz.course_code }}</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('instructor.manage_quizzes') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Quizzes
+        </a>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 fw-bold text-primary">Student Submissions</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Student ID</th>
+                        <th>Score (%)</th>
+                        <th>Earned Credits</th>
+                        <th>Status</th>
+                        <th>Attempt Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sub in submissions %}
+                    <tr>
+                        <td>{{ student_map.get(sub.student_id, 'Unknown') }}</td>
+                        <td>{{ sub.student_id }}</td>
+                        <td>{{ sub.score_percentage | round(1) }}%</td>
+                        <td>{{ sub.earned_credits }}</td>
+                        <td>
+                            {% if sub.status == 'Pass' %}
+                            <span class="badge bg-success">Pass</span>
+                            {% else %}
+                            <span class="badge bg-danger">Fail</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ sub.attempt_date.strftime('%Y-%m-%d %H:%M') if sub.attempt_date else 'N/A' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">No submissions yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

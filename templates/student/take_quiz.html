@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Take Quiz - UniCore{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-md-8">
+        <h2 class="fw-bold">Quiz: {{ quiz.title }}</h2>
+        <p class="text-muted mb-0">Course: {{ course.course_code }} - {{ course.course_name }}</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <span class="badge bg-primary fs-6">Credits Available: {{ course.credits }}</span>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card shadow border-0 rounded-lg">
+            <div class="card-header bg-primary text-white py-3">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-ui-checks"></i> Answer the following questions</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-info py-2 mb-4">
+                    <strong>Credit System:</strong> 
+                    &ge;90%: Full Credits &bull; &ge;75%: 75% Credits &bull; &ge;60%: 50% Credits &bull; &ge;50%: 25% Credits
+                </div>
+                
+                <form method="POST" action="{{ url_for('student.take_quiz', quiz_id=quiz._id) }}">
+                    {% for q in quiz.questions %}
+                    {% set outer_loop = loop %}
+                    <div class="mb-4">
+                        <h5 class="fw-bold">{{ outer_loop.index }}. {{ q.question_text }}</h5>
+                        <div class="ps-3 mt-3">
+                            {% for opt in q.options %}
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="q{{ outer_loop.index0 }}" id="q{{ outer_loop.index0 }}_opt{{ loop.index }}" value="{{ loop.index0 }}" required>
+                                <label class="form-check-label fs-5" for="q{{ outer_loop.index0 }}_opt{{ loop.index }}">
+                                    {{ opt }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% if not loop.last %}<hr class="my-4">{% endif %}
+                    {% else %}
+                    <p class="text-muted">No questions found in this quiz.</p>
+                    {% endfor %}
+                    
+                    <div class="d-grid gap-2 mt-5">
+                        <button type="submit" class="btn btn-success btn-lg fw-bold" onclick="return confirm('Are you sure you want to submit your answers?');">Submit Quiz</button>
+                        <a href="{{ url_for('student.dashboard') }}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

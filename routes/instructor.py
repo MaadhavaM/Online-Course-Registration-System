@@ -4,6 +4,7 @@ from database.db import get_db, get_fs
 from werkzeug.utils import secure_filename
 from functools import wraps
 from bson.objectid import ObjectId
+from datetime import datetime
 import os
 from config import Config
 
@@ -182,6 +183,104 @@ def delete_assignment(assignment_id):
         
     return redirect(url_for('instructor.manage_assignments'))
 
+@instructor_bp.route('/view_material/<file_id>')
+@login_required
+@instructor_required
+def view_material(file_id):
+    db = get_db()
+    instructor_id = current_user.user_data['instructor_id']
+    
+    try:
+        assignment = db.assignments.find_one({'file_id': ObjectId(file_id)})
+    except:
+        assignment = None
+        
+    if not assignment:
+        flash('Material not found.', 'danger')
+        return redirect(url_for('instructor.manage_assignments'))
+        
+    # Verify course ownership
+    course = db.courses.find_one({'course_code': assignment['course_code'], 'instructor_id': instructor_id})
+    if not course:
+        flash('Unauthorized.', 'danger')
+        return redirect(url_for('instructor.manage_assignments'))
+        
+    return render_template('instructor/view_material.html', assignment=assignment)
+
+@instructor_bp.route('/grade_assignments/<course_code>')
+@login_required
+@instructor_required
+def grade_assignments(course_code):
+    db = get_db()
+    instructor_id = current_user.user_data['instructor_id']
+    
+    # Verify course ownership
+    course = db.courses.find_one({'course_code': course_code, 'instructor_id': instructor_id})
+    if not course:
+        flash('Course not found or unauthorized.', 'danger')
+        return redirect(url_for('instructor.manage_assignments'))
+        
+    assignments = list(db.assignments.find({'course_code': course_code}))
+    
+    # Get all submissions for this course
+    submissions = list(db.assignment_submissions.find({'course_code': course_code}))
+    
+    # Map student details
+    student_ids = [s['student_id'] for s in submissions]
+    students = list(db.students.find({'student_id': {'$in': student_ids}}))
+    student_map = {s['student_id']: s for s in students}
+    
+    # Group submissions by assignment
+    subs_by_assignment = {}
+    for sub in submissions:
+        aid = sub['assignment_id']
+        if aid not in subs_by_assignment:
+            subs_by_assignment[aid] = []
+        subs_by_assignment[aid].append(sub)
+        
+    return render_template('instructor/grade_assignments.html', course=course, assignments=assignments, subs_by_assignment=subs_by_assignment, student_map=student_map)
+
+@instructor_bp.route('/submit_grade/<submission_id>', methods=['POST'])
+@login_required
+@instructor_required
+def submit_grade(submission_id):
+    db = get_db()
+    instructor_id = current_user.user_data['instructor_id']
+    
+    try:
+        score = float(request.form.get('score'))
+        if score < 0 or score > 100:
+            flash('Score must be between 0 and 100.', 'danger')
+            return redirect(request.referrer)
+            
+        submission = db.assignment_submissions.find_one({'_id': ObjectId(submission_id)})
+        if not submission:
+            flash('Submission not found.', 'danger')
+            return redirect(request.referrer)
+            
+        # Verify course ownership
+        course = db.courses.find_one({'course_code': submission['course_code'], 'instructor_id': instructor_id})
+        if not course:
+            flash('Unauthorized.', 'danger')
+            return redirect(request.referrer)
+            
+        db.assignment_submissions.update_one(
+            {'_id': ObjectId(submission_id)},
+            {'$set': {
+                'score': score,
+                'status': 'Graded',
+                'graded_by': instructor_id,
+                'graded_date': datetime.utcnow()
+            }}
+        )
+        flash('Grade submitted successfully.', 'success')
+        
+    except Exception as e:
+        print(f"Error submitting grade: {e}")
+        flash('Invalid score format or database error.', 'danger')
+        
+    return redirect(request.referrer)
+
 @instructor_bp.route('/students')
 @login_required
 @instructor_required
@@ -205,3 +304,129 @@ def view_students():
     course_map = {c['course_code']: c['course_name'] for c in my_courses}
     
     return render_template('instructor/students.html', enrollments=enrollments, student_map=student_map, course_map=course_map)
+
+@instructor_bp.route('/quizzes', methods=['GET', 'POST'])
+@login_required
+@instructor_required
+def manage_quizzes():
+    db = get_db()
+    instructor_id = current_user.user_data['instructor_id']
+    my_courses = list(db.courses.find({'instructor_id': instructor_id}))
+    course_codes = [c['course_code'] for c in my_courses]
+    
+    if request.method == 'POST':
+        course_code = request.form.get('course_code')
+        title = request.form.get('title')
+        
+        questions = []
+        question_count = int(request.form.get('question_count', 0))
+        for i in range(1, question_count + 1):
+            q_text = request.form.get(f'q{i}_text')
+            if q_text:
+                options = [
+                    request.form.get(f'q{i}_opt1'),
+                    request.form.get(f'q{i}_opt2'),
+                    request.form.get(f'q{i}_opt3'),
+                    request.form.get(f'q{i}_opt4')
+                ]
+                correct_opt = int(request.form.get(f'q{i}_correct'))
+                questions.append({
+                    'question_text': q_text,
+                    'options': options,
+                    'correct_option': correct_opt
+                })
+        
+        quiz_data = {
+            'course_code': course_code,
+            'instructor_id': instructor_id,
+            'title': title,
+            'questions': questions
+        }
+        db.quizzes.insert_one(quiz_data)
+        flash('Quiz created successfully.', 'success')
+        return redirect(url_for('instructor.manage_quizzes'))
+        
+    quizzes = list(db.quizzes.find({'course_code': {'$in': course_codes}}))
+    return render_template('instructor/quizzes.html', quizzes=quizzes, courses=my_courses)
+
+@instructor_bp.route('/edit_quiz/<quiz_id>', methods=['GET', 'POST'])
+@login_required
+@instructor_required
+def edit_quiz(quiz_id):
+    db = get_db()
+    instructor_id = current_user.user_data['instructor_id']
+    
+    quiz = db.quizzes.find_one({'_id': ObjectId(quiz_id), 'instructor_id': instructor_id})
+    if not quiz:
+        flash('Quiz not found.', 'danger')
+        return redirect(url_for('instructor.manage_quizzes'))
+        
+    if request.method == 'POST':
+        title = request.form.get('title')
+        course_code = request.form.get('course_code')
+        
+        questions = []
+        question_count = int(request.form.get('question_count', 0))
+        for i in range(1, question_count + 1):
+            q_text = request.form.get(f'q{i}_text')
+            if q_text:
+                options = [
+                    request.form.get(f'q{i}_opt1'),
+                    request.form.get(f'q{i}_opt2'),
+                    request.form.get(f'q{i}_opt3'),
+                    request.form.get(f'q{i}_opt4')
+                ]
+                correct_opt = request.form.get(f'q{i}_correct')
+                if correct_opt is not None:
+                    correct_opt = int(correct_opt)
+                else:
+                    correct_opt = 0 # Default if somehow missing
+                questions.append({
+                    'question_text': q_text,
+                    'options': options,
+                    'correct_option': correct_opt
+                })
+                
+        db.quizzes.update_one(
+            {'_id': ObjectId(quiz_id)},
+            {'$set': {
+                'title': title,
+                'course_code': course_code,
+                'questions': questions
+            }}
+        )
+        flash('Quiz updated successfully.', 'success')
+        return redirect(url_for('instructor.manage_quizzes'))
+        
+    my_courses = list(db.courses.find({'instructor_id': instructor_id}))
+    return render_template('instructor/edit_quiz.html', quiz=quiz, courses=my_courses)
+
+@instructor_bp.route('/delete_quiz/<quiz_id>', methods=['POST'])
+@login_required
+@instructor_required
+def delete_quiz(quiz_id):
+    db = get_db()
+    instructor_id = current_user.user_data['instructor_id']
+    db.quizzes.delete_one({'_id': ObjectId(quiz_id), 'instructor_id': instructor_id})
+    db.quiz_submissions.delete_many({'quiz_id': str(quiz_id)})
+    flash('Quiz deleted successfully.', 'success')
+    return redirect(url_for('instructor.manage_quizzes'))
+    
+@instructor_bp.route('/quiz_results/<quiz_id>')
+@login_required
+@instructor_required
+def quiz_results(quiz_id):
+    db = get_db()
+    instructor_id = current_user.user_data['instructor_id']
+    quiz = db.quizzes.find_one({'_id': ObjectId(quiz_id), 'instructor_id': instructor_id})
+    if not quiz:
+        flash('Quiz not found.', 'danger')
+        return redirect(url_for('instructor.manage_quizzes'))
+        
+    submissions = list(db.quiz_submissions.find({'quiz_id': str(quiz_id)}))
+    
+    student_ids = [s['student_id'] for s in submissions]
+    students = list(db.students.find({'student_id': {'$in': student_ids}}))
+    student_map = {s['student_id']: s['name'] for s in students}
+    
+    return render_template('instructor/quiz_results.html', quiz=quiz, submissions=submissions, student_map=student_map)

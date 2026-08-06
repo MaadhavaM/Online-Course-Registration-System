@@ -31,34 +31,107 @@
     </div>
     
     <div class="col-md-8 mb-4 order-md-1">
-        <div class="card shadow border-0">
-            <div class="card-header bg-info text-white">
-                <h6 class="m-0 fw-bold">Materials & Assignments</h6>
-            </div>
-            <div class="card-body">
-                {% if assignments %}
-                    <div class="list-group list-group-flush">
-                        {% for item in assignments %}
-                            <div class="list-group-item px-0 py-3">
-                                <div class="d-flex w-100 justify-content-between align-items-center">
-                                    <h6 class="mb-1 fw-bold text-dark">{{ item.title }}</h6>
-                                    <small class="text-muted">{% if item.due_date %}Due: {{ item.due_date }}{% endif %}</small>
-                                </div>
-                                <p class="mb-1 small">{{ item.description }}</p>
-                                {% if item.file_id %}
-                                    <a href="{{ url_for('download_file', file_id=item.file_id) }}" class="btn btn-sm btn-outline-info mt-2"><i class="bi bi-download"></i> Download {{ item.filename }}</a>
-                                {% elif item.file %}
-                                    <span class="text-muted small mt-2 d-block"><i class="bi bi-exclamation-triangle"></i> Legacy file - Please ask instructor to re-upload.</span>
-                                {% endif %}
+        <div class="accordion border shadow-sm rounded bg-white" id="courseAccordion">
+            <!-- Materials & Assignments -->
+            <div class="accordion-item border-0 border-bottom rounded-0">
+                <h2 class="accordion-header" id="headingMaterials">
+                    <button class="accordion-button bg-white text-dark fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMaterials" aria-expanded="true" aria-controls="collapseMaterials">
+                        <span class="fs-5">Materials & Assignments</span>
+                    </button>
+                </h2>
+                <div id="collapseMaterials" class="accordion-collapse collapse show" aria-labelledby="headingMaterials">
+                    <div class="accordion-body p-0">
+                        {% if assignments %}
+                            <div class="list-group list-group-flush">
+                                {% for item in assignments %}
+                                    <div class="list-group-item px-4 py-3 border-0 border-top border-light nav-hover">
+                                        <div class="d-flex w-100 justify-content-between align-items-center">
+                                            <div class="d-flex align-items-start">
+                                                <i class="bi bi-file-earmark-text text-secondary me-3 mt-1 fs-5"></i>
+                                                <div>
+                                                    <h6 class="mb-1 text-dark">{{ item.title }}</h6>
+                                                    {% if item.description %}
+                                                    <p class="mb-0 small text-muted">{{ item.description }}</p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="text-end ms-3 text-nowrap">
+                                                {% set aid_str = item._id|string %}
+                                                {% if aid_str in assignment_subs_map %}
+                                                    {% set sub = assignment_subs_map[aid_str] %}
+                                                    {% if sub.score is not none %}
+                                                        <span class="badge bg-success me-2">Score: {{ sub.score }}%</span>
+                                                    {% else %}
+                                                        <span class="badge bg-warning text-dark me-2">Submitted</span>
+                                                    {% endif %}
+                                                    <a href="{{ url_for('student.submit_assignment', assignment_id=item._id) }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-bold me-2">Resubmit</a>
+                                                {% else %}
+                                                    <a href="{{ url_for('student.submit_assignment', assignment_id=item._id) }}" class="btn btn-sm btn-outline-success rounded-pill px-4 fw-bold me-2">Submit</a>
+                                                {% endif %}
+                                                
+                                                {% if item.file_id %}
+                                                    <a href="{{ url_for('student.view_material', file_id=item.file_id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-bold me-2">View</a>
+                                                    <a href="{{ url_for('download_file', file_id=item.file_id) }}" class="btn btn-sm btn-light border rounded-circle text-primary" title="Download"><i class="bi bi-download"></i></a>
+                                                {% elif item.file %}
+                                                    <span class="text-danger small" title="Re-upload required"><i class="bi bi-exclamation-triangle"></i></span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
                             </div>
-                        {% endfor %}
+                        {% else %}
+                            <div class="text-center py-5 border-top border-light">
+                                <i class="bi bi-folder2-open fa-2x text-muted mb-2 d-block"></i>
+                                <p class="text-muted mb-0 small">No materials or assignments uploaded.</p>
+                            </div>
+                        {% endif %}
                     </div>
-                {% else %}
-                    <div class="text-center py-5">
-                        <i class="bi bi-folder2-open fa-3x text-muted mb-3 d-block"></i>
-                        <p class="text-muted">No materials or assignments have been uploaded for this course yet.</p>
+                </div>
+            </div>
+            
+            <!-- Quizzes -->
+            <div class="accordion-item border-0 rounded-0">
+                <h2 class="accordion-header" id="headingQuizzes">
+                    <button class="accordion-button bg-white text-dark fw-bold shadow-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseQuizzes" aria-expanded="false" aria-controls="collapseQuizzes">
+                        <span class="fs-5">Quizzes & Assessments</span>
+                    </button>
+                </h2>
+                <div id="collapseQuizzes" class="accordion-collapse collapse" aria-labelledby="headingQuizzes">
+                    <div class="accordion-body p-0">
+                        {% if quizzes %}
+                            <div class="list-group list-group-flush">
+                                {% for quiz in quizzes %}
+                                    <div class="list-group-item px-4 py-3 border-0 border-top border-light nav-hover">
+                                        <div class="d-flex w-100 justify-content-between align-items-center">
+                                            <div class="d-flex align-items-start">
+                                                <i class="bi bi-ui-checks text-secondary me-3 mt-1 fs-5"></i>
+                                                <div>
+                                                    <h6 class="mb-1 text-dark">{{ quiz.title }}</h6>
+                                                    <small class="text-muted">{{ quiz.questions|length }} Questions</small>
+                                                </div>
+                                            </div>
+                                            <div class="text-end ms-3">
+                                                {% set qid_str = quiz._id|string %}
+                                                {% if qid_str in quiz_scores %}
+                                                    <span class="badge bg-light text-dark border me-2">Best: {{ quiz_scores[qid_str] | round(1) }}%</span>
+                                                    <a href="{{ url_for('student.take_quiz', quiz_id=quiz._id) }}" class="btn btn-sm btn-outline-primary fw-bold rounded-pill px-4">Retake</a>
+                                                {% else %}
+                                                    <a href="{{ url_for('student.take_quiz', quiz_id=quiz._id) }}" class="btn btn-sm btn-primary fw-bold rounded-pill px-4">Take Quiz</a>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center py-5 border-top border-light">
+                                <i class="bi bi-ui-checks fa-2x text-muted mb-2 d-block"></i>
+                                <p class="text-muted mb-0 small">No quizzes available for this course yet.</p>
+                            </div>
+                        {% endif %}
                     </div>
-                {% endif %}
+                </div>
             </div>
         </div>
     </div>

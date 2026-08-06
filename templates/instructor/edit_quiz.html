@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}Edit Quiz - UniCore{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-md-6">
+        <h2 class="fw-bold">Edit Quiz</h2>
+    </div>
+    <div class="col-md-6 text-end">
+        <a href="{{ url_for('instructor.manage_quizzes') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Quizzes
+        </a>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('instructor.edit_quiz', quiz_id=quiz._id) }}" id="quizForm">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Select Course</label>
+                    <select class="form-select" name="course_code" required>
+                        {% for c in courses %}
+                        <option value="{{ c.course_code }}" {% if c.course_code == quiz.course_code %}selected{% endif %}>{{ c.course_code }} - {{ c.course_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Quiz Title</label>
+                    <input type="text" class="form-control" name="title" value="{{ quiz.title }}" required>
+                </div>
+            </div>
+            
+            <hr class="text-muted">
+            <h5 class="fw-bold mb-3">Questions</h5>
+            
+            <div id="questionsContainer" class="d-flex overflow-auto pb-3 px-1" style="gap: 1rem; scroll-snap-type: x mandatory;">
+                <!-- Questions will be added here -->
+            </div>
+            
+            <input type="hidden" name="question_count" id="questionCount" value="0">
+            <div class="d-flex justify-content-between mt-3">
+                <button type="button" class="btn btn-outline-primary fw-bold" onclick="addQuestion()">
+                    <i class="bi bi-plus-lg"></i> Add Question
+                </button>
+                <button type="submit" class="btn btn-success fw-bold px-4">
+                    <i class="bi bi-check-circle"></i> Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script id="quizData" type="application/json">
+    {{ quiz.questions | tojson | safe }}
+</script>
+
+<script>
+    let qCount = 0;
+    
+    // Existing questions data from server, parsed from the JSON script block above
+    const existingQuestions = JSON.parse(document.getElementById('quizData').textContent);
+    
+    function addQuestion(qData = null) {
+        qCount++;
+        document.getElementById('questionCount').value = qCount;
+        
+        const qText = qData ? qData.question_text : '';
+        const opt1 = qData ? qData.options[0] : '';
+        const opt2 = qData ? qData.options[1] : '';
+        const opt3 = qData ? qData.options[2] : '';
+        const opt4 = qData ? qData.options[3] : '';
+        const correct = qData ? qData.correct_option : 0;
+        
+        const qHtml = `
+            <div class="card border-secondary shadow-sm flex-shrink-0" id="q${qCount}_card" style="width: 500px; scroll-snap-align: start;">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <span class="fw-bold">Question ${qCount}</span>
+                    <button type="button" class="btn btn-sm btn-danger py-0" onclick="removeQuestion(${qCount})">&times;</button>
+                </div>
+                <div class="card-body py-2">
+                    <input type="text" class="form-control mb-2" name="q${qCount}_text" placeholder="Question Text" value="${escapeHtml(qText)}" required>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div class="input-group input-group-sm">
+                                <div class="input-group-text"><input class="form-check-input mt-0" type="radio" name="q${qCount}_correct" value="0" required ${correct === 0 ? 'checked' : ''}></div>
+                                <input type="text" class="form-control" name="q${qCount}_opt1" placeholder="Option A" value="${escapeHtml(opt1)}" required>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="input-group input-group-sm">
+                                <div class="input-group-text"><input class="form-check-input mt-0" type="radio" name="q${qCount}_correct" value="1" ${correct === 1 ? 'checked' : ''}></div>
+                                <input type="text" class="form-control" name="q${qCount}_opt2" placeholder="Option B" value="${escapeHtml(opt2)}" required>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="input-group input-group-sm">
+                                <div class="input-group-text"><input class="form-check-input mt-0" type="radio" name="q${qCount}_correct" value="2" ${correct === 2 ? 'checked' : ''}></div>
+                                <input type="text" class="form-control" name="q${qCount}_opt3" placeholder="Option C" value="${escapeHtml(opt3)}" required>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="input-group input-group-sm">
+                                <div class="input-group-text"><input class="form-check-input mt-0" type="radio" name="q${qCount}_correct" value="3" ${correct === 3 ? 'checked' : ''}></div>
+                                <input type="text" class="form-control" name="q${qCount}_opt4" placeholder="Option D" value="${escapeHtml(opt4)}" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', qHtml);
+    }
+    
+    function removeQuestion(id) {
+        document.getElementById(`q${id}_card`).remove();
+    }
+    
+    function escapeHtml(unsafe) {
+        if (!unsafe) return '';
+        return unsafe
+             .replace(/&/g, "&amp;")
+             .replace(/</g, "&lt;")
+             .replace(/>/g, "&gt;")
+             .replace(/"/g, "&quot;")
+             .replace(/'/g, "&#039;");
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        if (existingQuestions && existingQuestions.length > 0) {
+            existingQuestions.forEach(q => addQuestion(q));
+        } else {
+            addQuestion();
+        }
+    });
+</script>
+{% endblock %}
