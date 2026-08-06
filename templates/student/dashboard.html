@@ -73,7 +73,7 @@
                         <th>Credits Earned</th>
                         <th>Status</th>
                         <th>Registration Date</th>
-                        <th>Course Material</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -100,9 +100,16 @@
                             </td>
                             <td>{{ enroll.registration_date.strftime('%Y-%m-%d') }}</td>
                             <td>
-                                <a href="{{ url_for('student.view_materials', course_code=course.course_code) }}" class="btn btn-sm btn-primary fw-bold px-3 rounded-pill">
-                                    <i class="bi bi-journal-text me-1"></i> Go to Materials
-                                </a>
+                                <div class="d-flex gap-2">
+                                    <a href="{{ url_for('student.view_materials', course_code=course.course_code) }}" class="btn btn-sm btn-primary fw-bold px-3 rounded-pill text-nowrap">
+                                        <i class="bi bi-journal-text me-1"></i> Materials
+                                    </a>
+                                    {% if enroll.status == 'Completed' %}
+                                    <a href="{{ url_for('student.certificate', course_code=course.course_code) }}" class="btn btn-sm btn-success fw-bold px-3 rounded-pill text-nowrap" target="_blank">
+                                        <i class="bi bi-award-fill me-1"></i> Certificate
+                                    </a>
+                                    {% endif %}
+                                </div>
                             </td>
                         </tr>
                     {% else %}

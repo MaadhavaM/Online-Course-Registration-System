@@ -69,11 +69,17 @@ def dashboard():
             
         credits_by_course[cc] = earned
         
-        # Update enrollment status if they passed
-        if avg_score >= 50:
+        # Update enrollment status if they passed and completed ALL quizzes
+        attempted_all = len(best_quiz_scores) >= total_quizzes and total_quizzes > 0
+        if avg_score >= 50 and attempted_all:
             db.enrollments.update_one(
                 {'student_id': student_id, 'course_code': cc},
                 {'$set': {'status': 'Completed'}}
+            )
+        else:
+            db.enrollments.update_one(
+                {'student_id': student_id, 'course_code': cc, 'status': 'Completed'},
+                {'$set': {'status': 'Registered'}}
             )
             
     # Refresh enrollments after possible status updates
@@ -337,7 +343,18 @@ def take_quiz(quiz_id):
             'attempt_date': datetime.utcnow()
         })
         
-        if status == 'Pass':
+        # Evaluate course completion
+        total_quizzes = db.quizzes.count_documents({'course_code': course_code})
+        all_subs = list(db.quiz_submissions.find({'student_id': student_id, 'course_code': course_code}))
+        best_scores = {}
+        for sub in all_subs:
+            qid = sub['quiz_id']
+            score = sub.get('score_percentage', 0)
+            if qid not in best_scores or score > best_scores[qid]:
+                best_scores[qid] = score
+                
+        avg = sum(best_scores.values()) / total_quizzes if total_quizzes > 0 else 0
+        if len(best_scores) >= total_quizzes and avg >= 50 and total_quizzes > 0:
             db.enrollments.update_one(
                 {'student_id': student_id, 'course_code': course_code},
                 {'$set': {'status': 'Completed'}}
@@ -363,3 +380,39 @@ def quiz_result(submission_id):
     course = db.courses.find_one({'course_code': submission['course_code']})
     
     return render_template('student/quiz_result.html', submission=submission, quiz=quiz, course=course)
+
+@student_bp.route('/certificate/<course_code>')
+@login_required
+@student_required
+def certificate(course_code):
+    db = get_db()
+    student_id = current_user.user_data['student_id']
+    
+    # Check enrollment status
+    enrollment = db.enrollments.find_one({'student_id': student_id, 'course_code': course_code})
+    if not enrollment or enrollment.get('status') != 'Completed':
+        flash('You must complete the course to view your certificate.', 'warning')
+        return redirect(url_for('student.dashboard'))
+        
+    course = db.courses.find_one({'course_code': course_code})
+    
+    # Calculate grade
+    total_quizzes = db.quizzes.count_documents({'course_code': course_code})
+    if total_quizzes == 0:
+        avg_score = 0
+    else:
+        quiz_subs = list(db.quiz_submissions.find({'student_id': student_id, 'course_code': course_code}))
+        best_quiz_scores = {}
+        for sub in quiz_subs:
+            qid = sub['quiz_id']
+            score = sub.get('score_percentage', 0)
+            if qid not in best_quiz_scores or score > best_quiz_scores[qid]:
+                best_quiz_scores[qid] = score
+        total_score = sum(best_quiz_scores.values())
+        avg_score = total_score / total_quizzes
+        
+    student_name = current_user.user_data.get('name', 'Student')
+    # Use today's date or completion date if available
+    date = datetime.now().strftime("%B %d, %Y")
+    
+    return render_template('student/certificate.html', course=course, student_name=student_name, grade=avg_score, date=date)

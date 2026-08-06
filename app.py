@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, url_for, send_file, abort
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from config import Config
 from database.db import init_db, get_fs
 from models.user import get_user_by_id
@@ -36,6 +36,13 @@ def create_app(config_class=Config):
 
     @app.route('/')
     def index():
+        if current_user.is_authenticated:
+            if current_user.role == 'admin':
+                return redirect(url_for('admin.dashboard'))
+            elif current_user.role == 'instructor':
+                return redirect(url_for('instructor.dashboard'))
+            else:
+                return redirect(url_for('student.dashboard'))
         return render_template('index.html')
 
     @app.route('/download/<file_id>')
