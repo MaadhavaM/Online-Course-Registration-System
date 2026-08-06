@@ -34,10 +34,9 @@ def dashboard():
     
     for course in courses:
         cc = course['course_code']
-        # Count total assessments
+        # Count total assessments (quizzes only)
         total_quizzes = db.quizzes.count_documents({'course_code': cc})
-        total_assignments = db.assignments.count_documents({'course_code': cc})
-        total_assessments = total_quizzes + total_assignments
+        total_assessments = total_quizzes
         
         if total_assessments == 0:
             credits_by_course[cc] = 0
@@ -52,18 +51,8 @@ def dashboard():
             score = sub.get('score_percentage', 0)
             if qid not in best_quiz_scores or score > best_quiz_scores[qid]:
                 best_quiz_scores[qid] = score
-                
-        # Get best assignment scores
-        assignment_subs = list(db.assignment_submissions.find({'student_id': student_id, 'course_code': cc}))
-        best_assignment_scores = {}
-        for sub in assignment_subs:
-            aid = sub['assignment_id']
-            score = sub.get('score', 0)
-            if score is not None:
-                if aid not in best_assignment_scores or score > best_assignment_scores[aid]:
-                    best_assignment_scores[aid] = score
                     
-        total_score = sum(best_quiz_scores.values()) + sum(best_assignment_scores.values())
+        total_score = sum(best_quiz_scores.values())
         avg_score = total_score / total_assessments
         grades_by_course[cc] = avg_score
         
