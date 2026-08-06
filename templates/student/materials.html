@@ -56,19 +56,6 @@
                                                 </div>
                                             </div>
                                             <div class="text-end ms-3 text-nowrap">
-                                                {% set aid_str = item._id|string %}
-                                                {% if aid_str in assignment_subs_map %}
-                                                    {% set sub = assignment_subs_map[aid_str] %}
-                                                    {% if sub.score is not none %}
-                                                        <span class="badge bg-success me-2">Score: {{ sub.score }}%</span>
-                                                    {% else %}
-                                                        <span class="badge bg-warning text-dark me-2">Submitted</span>
-                                                    {% endif %}
-                                                    <a href="{{ url_for('student.submit_assignment', assignment_id=item._id) }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-bold me-2">Resubmit</a>
-                                                {% else %}
-                                                    <a href="{{ url_for('student.submit_assignment', assignment_id=item._id) }}" class="btn btn-sm btn-outline-success rounded-pill px-4 fw-bold me-2">Submit</a>
-                                                {% endif %}
-                                                
                                                 {% if item.file_id %}
                                                     <a href="{{ url_for('student.view_material', file_id=item.file_id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-bold me-2">View</a>
                                                     <a href="{{ url_for('download_file', file_id=item.file_id) }}" class="btn btn-sm btn-light border rounded-circle text-primary" title="Download"><i class="bi bi-download"></i></a>
