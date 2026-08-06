@@ -1,4 +1,4 @@
-// Auto-dismiss Flash Alerts after 4 seconds
+// Auto-dismiss Flash Alerts after 2 minutes (120 seconds)
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() {
         const alerts = document.querySelectorAll('.alert');
@@ -7,5 +7,5 @@ document.addEventListener('DOMContentLoaded', function() {
             const bsAlert = new bootstrap.Alert(alert);
             bsAlert.close();
         });
-    }, 4000); // 4000 milliseconds = 4 seconds
+    }, 120000); // 120000 milliseconds = 2 minutes
 });

@@ -55,3 +55,17 @@ class AdminRegistrationForm(FlaskForm):
         db = get_db()
         if db is not None and db.admins.find_one({"email": email.data}):
             raise ValidationError('That email is already registered as an Admin. Please choose a different one.')
+
+class ForgotPasswordForm(FlaskForm):
+    role = SelectField('Role', choices=[('student', 'Student'), ('instructor', 'Instructor'), ('admin', 'Admin')], validators=[DataRequired()])
+    phone = StringField('Registered Phone Number', validators=[DataRequired(), Length(min=10, max=15), Regexp(r'^\d+$', message="Phone number must contain only digits.")])
+    submit = SubmitField('Send OTP')
+
+class VerifyOTPForm(FlaskForm):
+    otp = StringField('Enter 6-Digit OTP', validators=[DataRequired(), Length(min=6, max=6), Regexp(r'^\d+$', message="OTP must contain only digits.")])
+    submit = SubmitField('Verify OTP')
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('New Password', validators=[DataRequired(), Length(min=6)])
+    confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('password', message='Passwords must match.')])
+    submit = SubmitField('Reset Password')

@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, session
+import random
 from flask_login import login_user, logout_user, login_required, current_user
 from forms.auth_forms import LoginForm, StudentRegistrationForm, AdminRegistrationForm
 from models.user import User, verify_password
@@ -108,3 +109,82 @@ def logout():
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('auth.login'))
+
+@auth_bp.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    from forms.auth_forms import ForgotPasswordForm
+    form = ForgotPasswordForm()
+    if form.validate_on_submit():
+        db = get_db()
+        role = form.role.data
+        phone = form.phone.data
+        
+        user_data = None
+        if role == 'admin':
+            user_data = db.admins.find_one({'phone': phone})
+        elif role == 'instructor':
+            user_data = db.instructors.find_one({'phone': phone})
+        elif role == 'student':
+            user_data = db.students.find_one({'phone': phone})
+            
+        if user_data:
+            otp = str(random.randint(100000, 999999))
+            session['reset_otp'] = otp
+            session['reset_phone'] = phone
+            session['reset_role'] = role
+            
+            # Mock SMS functionality
+            flash(f'MOCK SMS: Your password reset OTP is {otp}', 'info')
+            return redirect(url_for('auth.verify_otp'))
+        else:
+            flash('No account found with that phone number and role.', 'danger')
+            
+    return render_template('auth/forgot_password.html', form=form)
+
+@auth_bp.route('/verify-otp', methods=['GET', 'POST'])
+def verify_otp():
+    if 'reset_otp' not in session:
+        flash('Session expired. Please request a new OTP.', 'warning')
+        return redirect(url_for('auth.forgot_password'))
+        
+    from forms.auth_forms import VerifyOTPForm
+    form = VerifyOTPForm()
+    if form.validate_on_submit():
+        if form.otp.data == session.get('reset_otp'):
+            session['otp_verified'] = True
+            return redirect(url_for('auth.reset_password'))
+        else:
+            flash('Invalid OTP. Please try again.', 'danger')
+            
+    return render_template('auth/verify_otp.html', form=form)
+
+@auth_bp.route('/reset-password', methods=['GET', 'POST'])
+def reset_password():
+    if not session.get('otp_verified'):
+        flash('Unauthorized access.', 'danger')
+        return redirect(url_for('auth.login'))
+        
+    from forms.auth_forms import ResetPasswordForm
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        db = get_db()
+        role = session.get('reset_role')
+        phone = session.get('reset_phone')
+        hashed_password = generate_password_hash(form.password.data)
+        
+        if role == 'admin':
+            db.admins.update_one({'phone': phone}, {'$set': {'password': hashed_password}})
+        elif role == 'instructor':
+            db.instructors.update_one({'phone': phone}, {'$set': {'password': hashed_password}})
+        elif role == 'student':
+            db.students.update_one({'phone': phone}, {'$set': {'password': hashed_password}})
+            
+        session.pop('reset_otp', None)
+        session.pop('reset_phone', None)
+        session.pop('reset_role', None)
+        session.pop('otp_verified', None)
+        
+        flash('Password reset successfully! You can now log in.', 'success')
+        return redirect(url_for('auth.login'))
+        
+    return render_template('auth/reset_password.html', form=form)
