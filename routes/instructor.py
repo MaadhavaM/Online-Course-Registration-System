@@ -141,6 +141,7 @@ def manage_assignments():
                 
             assignment_data = {
                 'course_code': request.form.get('course_code'),
+                'section_number': int(request.form.get('section_number', 1)),
                 'title': request.form.get('title'),
                 'description': request.form.get('description'),
                 'due_date': request.form.get('due_date'),
@@ -339,6 +340,8 @@ def manage_quizzes():
         quiz_data = {
             'course_code': course_code,
             'instructor_id': instructor_id,
+            'section_number': int(request.form.get('section_number', 1)),
+            'is_final_exam': request.form.get('is_final_exam') == 'on',
             'title': title,
             'questions': questions
         }
@@ -392,6 +395,8 @@ def edit_quiz(quiz_id):
             {'$set': {
                 'title': title,
                 'course_code': course_code,
+                'section_number': int(request.form.get('section_number', 1)),
+                'is_final_exam': request.form.get('is_final_exam') == 'on',
                 'questions': questions
             }}
         )

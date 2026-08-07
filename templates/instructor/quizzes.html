@@ -24,6 +24,8 @@
                     <tr>
                         <th>Title</th>
                         <th>Course Code</th>
+                        <th>Section</th>
+                        <th>Type</th>
                         <th>Questions</th>
                         <th>Actions</th>
                     </tr>
@@ -33,6 +35,14 @@
                     <tr>
                         <td>{{ quiz.title }}</td>
                         <td>{{ quiz.course_code }}</td>
+                        <td><span class="badge bg-primary">Section {{ quiz.section_number|default(1) }}</span></td>
+                        <td>
+                            {% if quiz.is_final_exam %}
+                                <span class="badge bg-danger">Final Exam</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Quiz</span>
+                            {% endif %}
+                        </td>
                         <td>{{ quiz.questions|length }}</td>
                         <td>
                             <a href="{{ url_for('instructor.edit_quiz', quiz_id=quiz._id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i> Edit</a>
@@ -76,6 +86,18 @@
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Quiz Title</label>
                             <input type="text" class="form-control" name="title" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Section Number</label>
+                            <input type="number" class="form-control" name="section_number" value="1" min="1" required>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-end pb-2">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="isFinalExam" name="is_final_exam">
+                                <label class="form-check-label fw-bold" for="isFinalExam">Is this the Final Exam?</label>
+                            </div>
                         </div>
                     </div>
                     

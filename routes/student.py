@@ -34,44 +34,35 @@ def dashboard():
     
     for course in courses:
         cc = course['course_code']
-        # Count total assessments (quizzes only)
-        total_quizzes = db.quizzes.count_documents({'course_code': cc})
-        total_assessments = total_quizzes
+        # Find Final Exam for this course
+        final_exam = db.quizzes.find_one({'course_code': cc, 'is_final_exam': True})
         
-        if total_assessments == 0:
+        if not final_exam:
             credits_by_course[cc] = 0
             grades_by_course[cc] = 0
             continue
             
-        # Get best quiz scores
-        quiz_subs = list(db.quiz_submissions.find({'student_id': student_id, 'course_code': cc}))
-        best_quiz_scores = {}
-        for sub in quiz_subs:
-            qid = sub['quiz_id']
-            score = sub.get('score_percentage', 0)
-            if qid not in best_quiz_scores or score > best_quiz_scores[qid]:
-                best_quiz_scores[qid] = score
-                    
-        total_score = sum(best_quiz_scores.values())
-        avg_score = total_score / total_assessments
-        grades_by_course[cc] = avg_score
+        # Get best final exam score
+        quiz_subs = list(db.quiz_submissions.find({'student_id': student_id, 'course_code': cc, 'quiz_id': str(final_exam['_id'])}))
+        best_score = max([sub.get('score_percentage', 0) for sub in quiz_subs] + [0])
+        
+        grades_by_course[cc] = best_score
         
         course_credits = course['credits']
         earned = 0
-        if avg_score >= 90:
+        if best_score >= 90:
             earned = course_credits * 1.0
-        elif avg_score >= 75:
+        elif best_score >= 75:
             earned = course_credits * 0.75
-        elif avg_score >= 60:
+        elif best_score >= 60:
             earned = course_credits * 0.50
-        elif avg_score >= 50:
+        elif best_score >= 50:
             earned = course_credits * 0.25
             
         credits_by_course[cc] = earned
         
-        # Update enrollment status if they passed and completed ALL quizzes
-        attempted_all = len(best_quiz_scores) >= total_quizzes and total_quizzes > 0
-        if avg_score >= 50 and attempted_all:
+        # Update enrollment status if they passed the final exam
+        if best_score >= 50:
             db.enrollments.update_one(
                 {'student_id': student_id, 'course_code': cc},
                 {'$set': {'status': 'Completed'}}
@@ -81,6 +72,7 @@ def dashboard():
                 {'student_id': student_id, 'course_code': cc, 'status': 'Completed'},
                 {'$set': {'status': 'Registered'}}
             )
+            
             
     # Refresh enrollments after possible status updates
     enrollments = list(db.enrollments.find({'student_id': student_id}))
@@ -144,7 +136,8 @@ def register_course(course_code):
     student_id = current_user.user_data['student_id']
     
     # Check if already registered
-    if db.enrollments.find_one({'student_id': student_id, 'course_code': course_code}):
+    existing_enrollment = db.enrollments.find_one({'student_id': student_id, 'course_code': course_code})
+    if existing_enrollment:
         flash('You are already registered for this course.', 'warning')
         return redirect(url_for('student.browse_courses'))
         
@@ -177,7 +170,11 @@ def drop_course(course_code):
     student_id = current_user.user_data['student_id']
     
     result = db.enrollments.delete_one({'student_id': student_id, 'course_code': course_code})
+    
     if result.deleted_count > 0:
+        # Wipe past progress so credits are deregistered and fresh start is possible
+        db.quiz_submissions.delete_many({'student_id': student_id, 'course_code': course_code})
+        db.assignment_submissions.delete_many({'student_id': student_id, 'course_code': course_code})
         flash(f'Successfully dropped course {course_code}.', 'success')
     else:
         flash('Failed to drop course.', 'danger')
@@ -211,8 +208,47 @@ def view_materials(course_code):
         score = sub.get('score_percentage', 0)
         if qid not in quiz_scores or score > quiz_scores[qid]:
             quiz_scores[qid] = score
+            
+    # Calculate unlocked sections
+    all_items = assignments + quizzes
+    sections = sorted(list(set(item.get('section_number', 1) for item in all_items)))
     
-    return render_template('student/materials.html', course=course, assignments=assignments, quizzes=quizzes, quiz_scores=quiz_scores, assignment_subs_map=assignment_subs_map)
+    highest_unlocked = sections[0] if sections else 1
+    all_regular_sections_completed = True
+    
+    for sec in sections:
+        sec_items = [i for i in all_items if i.get('section_number', 1) == sec and not i.get('is_final_exam')]
+        if not sec_items:
+            continue
+            
+        sec_completed = True
+        for item in sec_items:
+            if 'questions' in item: # It's a quiz
+                if quiz_scores.get(str(item['_id']), 0) < 50:
+                    sec_completed = False
+                    break
+            else: # It's an assignment (Reading Material)
+                pass # Reading materials do not block progress
+                    
+        if sec_completed:
+            idx = sections.index(sec)
+            if idx + 1 < len(sections):
+                highest_unlocked = sections[idx + 1]
+            else:
+                highest_unlocked = sec + 1
+        else:
+            all_regular_sections_completed = False
+            break
+            
+    # Group items for template
+    grouped_sections = {}
+    for sec in sections:
+        grouped_sections[sec] = {
+            'regular_items': [i for i in all_items if i.get('section_number', 1) == sec and not i.get('is_final_exam')],
+            'final_exams': [i for i in all_items if i.get('section_number', 1) == sec and i.get('is_final_exam')]
+        }
+    
+    return render_template('student/materials.html', course=course, grouped_sections=grouped_sections, highest_unlocked=highest_unlocked, all_regular_completed=all_regular_sections_completed, quiz_scores=quiz_scores, assignment_subs_map=assignment_subs_map)
 
 @student_bp.route('/view_material/<file_id>')
 @login_required
@@ -343,18 +379,8 @@ def take_quiz(quiz_id):
             'attempt_date': datetime.utcnow()
         })
         
-        # Evaluate course completion
-        total_quizzes = db.quizzes.count_documents({'course_code': course_code})
-        all_subs = list(db.quiz_submissions.find({'student_id': student_id, 'course_code': course_code}))
-        best_scores = {}
-        for sub in all_subs:
-            qid = sub['quiz_id']
-            score = sub.get('score_percentage', 0)
-            if qid not in best_scores or score > best_scores[qid]:
-                best_scores[qid] = score
-                
-        avg = sum(best_scores.values()) / total_quizzes if total_quizzes > 0 else 0
-        if len(best_scores) >= total_quizzes and avg >= 50 and total_quizzes > 0:
+        # Evaluate course completion ONLY based on Final Exam
+        if quiz.get('is_final_exam') and score_percentage >= 50:
             db.enrollments.update_one(
                 {'student_id': student_id, 'course_code': course_code},
                 {'$set': {'status': 'Completed'}}
@@ -396,20 +422,13 @@ def certificate(course_code):
         
     course = db.courses.find_one({'course_code': course_code})
     
-    # Calculate grade
-    total_quizzes = db.quizzes.count_documents({'course_code': course_code})
-    if total_quizzes == 0:
-        avg_score = 0
-    else:
-        quiz_subs = list(db.quiz_submissions.find({'student_id': student_id, 'course_code': course_code}))
-        best_quiz_scores = {}
-        for sub in quiz_subs:
-            qid = sub['quiz_id']
-            score = sub.get('score_percentage', 0)
-            if qid not in best_quiz_scores or score > best_quiz_scores[qid]:
-                best_quiz_scores[qid] = score
-        total_score = sum(best_quiz_scores.values())
-        avg_score = total_score / total_quizzes
+    # Calculate grade from Final Exam only
+    final_exam = db.quizzes.find_one({'course_code': course_code, 'is_final_exam': True})
+    avg_score = 0
+    if final_exam:
+        quiz_subs = list(db.quiz_submissions.find({'student_id': student_id, 'course_code': course_code, 'quiz_id': str(final_exam['_id'])}))
+        if quiz_subs:
+            avg_score = max([sub.get('score_percentage', 0) for sub in quiz_subs])
         
     student_name = current_user.user_data.get('name', 'Student')
     # Use today's date or completion date if available
@@ -419,3 +438,60 @@ def certificate(course_code):
     instructor_name = instructor.get('name') if instructor else "Course Instructor"
     
     return render_template('student/certificate.html', course=course, student_name=student_name, grade=avg_score, date=date, instructor_name=instructor_name)
+
+@student_bp.route('/profile')
+@login_required
+@student_required
+def profile():
+    db = get_db()
+    student_id = current_user.user_data['student_id']
+    student = db.students.find_one({'student_id': student_id})
+    return render_template('student/profile.html', student=student)
+
+@student_bp.route('/update_profile', methods=['GET', 'POST'])
+@login_required
+@student_required
+def update_profile():
+    db = get_db()
+    student_id = current_user.user_data['student_id']
+    student = db.students.find_one({'student_id': student_id})
+    
+    from forms.auth_forms import StudentUpdateProfileForm
+    form = StudentUpdateProfileForm()
+    
+    if form.validate_on_submit():
+        if form.email.data != student['email']:
+            existing = db.students.find_one({'email': form.email.data})
+            if existing:
+                flash('Email already in use.', 'danger')
+                return render_template('student/update_profile.html', form=form, student=student)
+                
+        db.students.update_one(
+            {'student_id': student_id},
+            {'$set': {
+                'name': form.name.data,
+                'email': form.email.data,
+                'phone': form.phone.data,
+                'department': form.department.data,
+                'semester': form.semester.data
+            }}
+        )
+        
+        # Update current user data in session
+        current_user.user_data['name'] = form.name.data
+        current_user.user_data['email'] = form.email.data
+        current_user.user_data['phone'] = form.phone.data
+        current_user.user_data['department'] = form.department.data
+        current_user.user_data['semester'] = form.semester.data
+        
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('student.update_profile'))
+        
+    elif request.method == 'GET':
+        form.name.data = student.get('name', '')
+        form.email.data = student.get('email', '')
+        form.phone.data = student.get('phone', '')
+        form.department.data = student.get('department', '')
+        form.semester.data = student.get('semester', '')
+        
+    return render_template('student/update_profile.html', form=form, student=student)

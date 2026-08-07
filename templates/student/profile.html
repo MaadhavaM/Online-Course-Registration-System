@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}My Profile - UniCore{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-4 fade-in">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3 border-bottom d-flex align-items-center">
+                <h4 class="mb-0 fw-bold text-dark"><i class="bi bi-person-badge me-2 text-primary"></i>My Profile</h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex justify-content-center align-items-center rounded-circle bg-light border mb-3" style="width: 100px; height: 100px;">
+                        <i class="bi bi-person-fill text-secondary" style="font-size: 4rem;"></i>
+                    </div>
+                    <h4 class="fw-bold mb-1">{{ student.name }}</h4>
+                    <p class="text-muted mb-0">{{ student.email }}</p>
+                </div>
+                
+                <hr class="mb-4">
+
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted fw-bold">Student ID</div>
+                    <div class="col-sm-8">{{ student.student_id }}</div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted fw-bold">Phone Number</div>
+                    <div class="col-sm-8">{{ student.phone or 'Not provided' }}</div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted fw-bold">Department</div>
+                    <div class="col-sm-8">{{ student.department or 'Not provided' }}</div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-sm-4 text-muted fw-bold">Semester</div>
+                    <div class="col-sm-8">Semester {{ student.semester or 'Not provided' }}</div>
+                </div>
+                
+                <div class="d-grid mt-4">
+                    <a href="{{ url_for('student.update_profile') }}" class="btn btn-primary py-2 fw-bold rounded-pill">
+                        <i class="bi bi-pencil-square me-2"></i>Update Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

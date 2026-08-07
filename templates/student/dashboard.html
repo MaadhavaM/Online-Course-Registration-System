@@ -5,7 +5,7 @@
 <div class="row mb-4 fade-in">
     <div class="col-12">
         <h2 class="fw-bold text-gradient-primary">Student Dashboard</h2>
-        <p class="text-muted fs-5">Welcome back, <span class="fw-medium text-dark">{{ current_user.user_data.name }}</span>! <span class="badge bg-light text-secondary border">{{ current_user.user_data.student_id }}</span></p>
+        <p class="text-muted fs-5">Hi, <span class="fw-medium text-dark">{{ current_user.user_data.name }}</span>! <span class="badge bg-light text-secondary border">{{ current_user.user_data.student_id }}</span></p>
     </div>
 </div>
 
@@ -84,7 +84,13 @@
                             <td class="fw-bold">{{ course.course_name }}</td>
                             {% set avg = grades_by_course.get(course.course_code, 0) %}
                             <td>
-                                <span class="badge bg-info fw-bold">{{ avg|round(1) }}%</span>
+                                <span class="badge bg-info fw-bold">
+                                    {% if avg == 0 %}
+                                        0%
+                                    {% else %}
+                                        {{ avg|round(1) }}%
+                                    {% endif %}
+                                </span>
                             </td>
                             <td>
                                 {% if enroll.status == 'Completed' %}
