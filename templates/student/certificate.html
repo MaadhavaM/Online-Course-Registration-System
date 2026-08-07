@@ -32,12 +32,19 @@
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             position: relative;
-            width: 100%;
-            max-width: 1056px; /* 11in width for letter landscape approx */
-            min-height: 768px; /* 8in height approx */
+            width: 1056px;
+            min-width: 1056px;
+            min-height: 768px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+        }
+
+        @media (max-width: 1100px) {
+            body {
+                justify-content: flex-start;
+                padding: 10px;
+            }
         }
 
         .certificate-border {
