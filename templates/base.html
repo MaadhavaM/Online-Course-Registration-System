@@ -24,9 +24,26 @@
             </button>
 
             <!-- Brand (Left/Center) -->
-            <a class="navbar-brand fw-bold fs-3 me-auto" href="{{ url_for('index') }}" style="color: #2D2F31;">
-                <i class="bi bi-mortarboard-fill me-2" style="color: #8E2DE2;"></i>UniCore
-            </a>
+            <div class="d-flex align-items-center me-auto">
+                {% if current_user.is_authenticated and current_user.role == 'instructor' %}
+                <div class="dropdown d-none d-lg-block me-3">
+                    <button class="btn btn-light rounded p-2 border-0 shadow-sm" type="button" id="instructorMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-list fs-4"></i>
+                    </button>
+                    <ul class="dropdown-menu shadow-sm border-0 mt-2" aria-labelledby="instructorMenu">
+                        <li><a class="dropdown-item py-2 fw-medium" href="{{ url_for('instructor.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
+                        <li><a class="dropdown-item py-2 fw-medium" href="{{ url_for('instructor.manage_courses') }}"><i class="bi bi-journal-bookmark me-2"></i>My Courses</a></li>
+                        <li><a class="dropdown-item py-2 fw-medium" href="{{ url_for('instructor.manage_assignments') }}"><i class="bi bi-file-earmark-text me-2"></i>Materials</a></li>
+                        <li><a class="dropdown-item py-2 fw-medium" href="{{ url_for('instructor.manage_quizzes') }}"><i class="bi bi-file-earmark-check me-2"></i>Assignments</a></li>
+                        <li><a class="dropdown-item py-2 fw-medium" href="{{ url_for('instructor.view_students') }}"><i class="bi bi-people me-2"></i>Students</a></li>
+                    </ul>
+                </div>
+                {% endif %}
+                
+                <a class="navbar-brand fw-bold fs-3 m-0" href="#" style="color: #2D2F31; cursor: default;">
+                    <i class="bi bi-mortarboard-fill me-2" style="color: #8E2DE2;"></i>UniCore
+                </a>
+            </div>
 
             <!-- User Actions (Always visible on Right) -->
             <div class="d-flex align-items-center order-lg-3">
@@ -39,6 +56,9 @@
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" aria-labelledby="profileDropdown">
                             {% if current_user.role == 'student' %}
                             <li><a class="dropdown-item py-2 fw-medium" href="{{ url_for('student.update_profile') }}"><i class="bi bi-person me-2"></i>Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            {% elif current_user.role == 'instructor' %}
+                            <li><a class="dropdown-item py-2 fw-medium" href="{{ url_for('instructor.update_profile') }}"><i class="bi bi-person me-2"></i>Profile</a></li>
                             <li><hr class="dropdown-divider"></li>
                             {% endif %}
                             <li><a class="dropdown-item py-2 text-danger fw-medium" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
@@ -69,9 +89,12 @@
                             {% if current_user.role == 'admin' %}
                                 <li class="nav-item mb-2 mb-lg-0 me-lg-3"><a class="nav-link text-white bg-purple fw-bold px-4 py-2 rounded text-center btn-purple-hover" href="{{ url_for('admin.dashboard') }}">Admin Panel</a></li>
                             {% elif current_user.role == 'instructor' %}
-                                <li class="nav-item mb-2 mb-lg-0 me-lg-3"><a class="nav-link text-dark nav-hover px-3 py-2 rounded" href="{{ url_for('instructor.manage_quizzes') }}">Assignments</a></li>
-                                <li class="nav-item mb-2 mb-lg-0 me-lg-3"><a class="nav-link text-dark nav-hover px-3 py-2 rounded" href="{{ url_for('instructor.manage_courses') }}">My Courses</a></li>
-                                <li class="nav-item mb-2 mb-lg-0 me-lg-3"><a class="nav-link text-dark nav-hover px-3 py-2 rounded" href="{{ url_for('instructor.dashboard') }}">Dashboard</a></li>
+                                <!-- Mobile Instructor Menu -->
+                                <li class="nav-item mb-2 mb-lg-0 me-lg-3 d-lg-none"><a class="nav-link text-dark nav-hover px-3 py-2 rounded" href="{{ url_for('instructor.dashboard') }}">Dashboard</a></li>
+                                <li class="nav-item mb-2 mb-lg-0 me-lg-3 d-lg-none"><a class="nav-link text-dark nav-hover px-3 py-2 rounded" href="{{ url_for('instructor.manage_courses') }}">My Courses</a></li>
+                                <li class="nav-item mb-2 mb-lg-0 me-lg-3 d-lg-none"><a class="nav-link text-dark nav-hover px-3 py-2 rounded" href="{{ url_for('instructor.manage_assignments') }}">Materials</a></li>
+                                <li class="nav-item mb-2 mb-lg-0 me-lg-3 d-lg-none"><a class="nav-link text-dark nav-hover px-3 py-2 rounded" href="{{ url_for('instructor.manage_quizzes') }}">Assignments</a></li>
+                                <li class="nav-item mb-2 mb-lg-0 me-lg-3 d-lg-none"><a class="nav-link text-dark nav-hover px-3 py-2 rounded" href="{{ url_for('instructor.view_students') }}">Students</a></li>
                             {% else %}
                                 <li class="nav-item mb-2 mb-lg-0 me-lg-3"><a class="nav-link text-dark nav-hover px-3 py-2 rounded" href="{{ url_for('student.browse_courses') }}">Browse Courses</a></li>
                                 <li class="nav-item mb-2 mb-lg-0 me-lg-3"><a class="nav-link text-dark nav-hover px-3 py-2 rounded" href="{{ url_for('student.dashboard') }}">Dashboard</a></li>

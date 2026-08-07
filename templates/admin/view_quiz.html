@@ -1,0 +1,55 @@
+{% extends "admin_base.html" %}
+{% block title %}View Quiz - {{ quiz.title }} - UniCore{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-md-8">
+        <h2 class="fw-bold mb-1">{{ quiz.title }}</h2>
+        <p class="text-muted mb-0">Course: {{ quiz.course_code }} | Section: {{ quiz.section_number|default(1) }}</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('admin.manage_quizzes') }}" class="btn btn-outline-secondary rounded-pill fw-bold">
+            <i class="bi bi-arrow-left"></i> Back to Quizzes
+        </a>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="fw-bold mb-0">Quiz Questions</h5>
+            <span class="badge bg-primary rounded-pill px-3 py-2">{{ quiz.questions|length }} Questions</span>
+        </div>
+
+        {% if quiz.questions %}
+            {% for q in quiz.questions %}
+            <div class="card border-0 bg-light mb-3">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3"><span class="text-primary me-2">{{ loop.index }}.</span> {{ q.text }}</h6>
+                    
+                    <div class="row g-3 ms-2">
+                        {% for opt in q.options %}
+                            <div class="col-md-6">
+                                <div class="p-2 border rounded {% if loop.index0 == q.correct_option|int %}border-success bg-success bg-opacity-10{% else %}border-secondary border-opacity-25 bg-white{% endif %}">
+                                    {% if loop.index0 == q.correct_option|int %}
+                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    {% else %}
+                                        <i class="bi bi-circle text-muted me-2"></i>
+                                    {% endif %}
+                                    {{ opt }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-center py-5 text-muted">
+                <i class="bi bi-patch-question fs-1 mb-3 d-block"></i>
+                <p>No questions have been added to this quiz yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

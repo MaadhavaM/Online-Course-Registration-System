@@ -58,7 +58,7 @@ def manage_courses():
             'category': request.form.get('category'),
             'credits': int(request.form.get('credits')),
             'duration': request.form.get('duration'),
-            'capacity': int(request.form.get('capacity')),
+            'capacity': min(int(request.form.get('capacity')), 100),
             'instructor_id': instructor_id,
             'status': 'Active'
         }
@@ -87,7 +87,7 @@ def edit_course(course_id):
         'category': request.form.get('category'),
         'credits': int(request.form.get('credits')),
         'duration': request.form.get('duration'),
-        'capacity': int(request.form.get('capacity')),
+        'capacity': min(int(request.form.get('capacity')), 100),
     }
     
     result = db.courses.update_one(
@@ -156,8 +156,15 @@ def manage_assignments():
             
         return redirect(url_for('instructor.manage_assignments'))
         
-    assignments = list(db.assignments.find({'course_code': {'$in': course_codes}}))
-    return render_template('instructor/assignments.html', assignments=assignments, courses=my_courses)
+    filter_course = request.args.get('course_code')
+    if filter_course and filter_course in course_codes:
+        assignments = list(db.assignments.find({'course_code': filter_course}))
+        selected_course = filter_course
+    else:
+        assignments = list(db.assignments.find({'course_code': {'$in': course_codes}}))
+        selected_course = None
+        
+    return render_template('instructor/assignments.html', assignments=assignments, courses=my_courses, selected_course=selected_course)
 
 @instructor_bp.route('/delete_assignment/<assignment_id>', methods=['POST'])
 @login_required
@@ -435,3 +442,47 @@ def quiz_results(quiz_id):
     student_map = {s['student_id']: s['name'] for s in students}
     
     return render_template('instructor/quiz_results.html', quiz=quiz, submissions=submissions, student_map=student_map)
+
+@instructor_bp.route('/profile')
+@login_required
+@instructor_required
+def profile():
+    db = get_db()
+    instructor_id = current_user.user_data['instructor_id']
+    instructor = db.instructors.find_one({'instructor_id': instructor_id})
+    return render_template('instructor/profile.html', instructor=instructor)
+
+@instructor_bp.route('/update_profile', methods=['GET', 'POST'])
+@login_required
+@instructor_required
+def update_profile():
+    db = get_db()
+    instructor_id = current_user.user_data['instructor_id']
+    instructor = db.instructors.find_one({'instructor_id': instructor_id})
+    
+    from forms.auth_forms import InstructorUpdateProfileForm
+    form = InstructorUpdateProfileForm(obj=instructor)
+    
+    if request.method == 'GET':
+        form.name.data = instructor.get('name')
+        form.email.data = instructor.get('email')
+        form.phone.data = instructor.get('phone')
+        form.department.data = instructor.get('department')
+        
+    if form.validate_on_submit():
+        db.instructors.update_one(
+            {'instructor_id': instructor_id},
+            {'$set': {
+                'name': form.name.data,
+                'email': form.email.data,
+                'phone': form.phone.data,
+                'department': form.department.data
+            }}
+        )
+        current_user.user_data['name'] = form.name.data
+        current_user.user_data['email'] = form.email.data
+        current_user.user_data['department'] = form.department.data
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('instructor.profile'))
+        
+    return render_template('instructor/update_profile.html', form=form, instructor=instructor)

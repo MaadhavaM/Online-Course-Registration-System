@@ -1,10 +1,10 @@
-{% extends "base.html" %}
-{% block title %}Assignments & Materials - UniCore{% endblock %}
+{% extends "admin_base.html" %}
+{% block title %}Manage Materials - UniCore{% endblock %}
 
 {% block content %}
 <div class="row mb-4 align-items-center">
     <div class="col-md-6">
-        <h2 class="fw-bold">Assignments & Materials</h2>
+        <h2 class="fw-bold">Manage Materials</h2>
     </div>
     <div class="col-md-6 text-end">
         <button class="btn btn-info text-white" data-bs-toggle="modal" data-bs-target="#uploadMaterialModal">
@@ -34,7 +34,7 @@
                 <tbody>
                     {% for assignment in assignments %}
                     <tr>
-                        <td><span class="badge bg-secondary">{{ assignment.course_code }}</span></td>
+                        <td><span class="badge bg-primary text-white">{{ assignment.course_code }}</span></td>
                         <td><span class="badge bg-primary">Section {{ assignment.section_number|default(1) }}</span></td>
                         <td class="fw-bold">{{ assignment.title }}</td>
                         <td>{{ assignment.description }}</td>
@@ -47,7 +47,7 @@
                         </td>
                         <td>
                             {% if assignment.file_id %}
-                                <a href="{{ url_for('instructor.view_material', file_id=assignment.file_id) }}" class="btn btn-sm btn-outline-primary me-1"><i class="bi bi-eye"></i> View</a>
+                                <a href="{{ url_for('admin.view_material', file_id=assignment.file_id) }}" class="btn btn-sm btn-outline-primary me-1"><i class="bi bi-eye"></i> View</a>
                                 <a href="{{ url_for('download_file', file_id=assignment.file_id) }}" class="btn btn-sm btn-outline-info"><i class="bi bi-download"></i> Download</a>
                             {% elif assignment.file %}
                                 <span class="text-muted small">Legacy file (needs re-upload)</span>
@@ -56,14 +56,14 @@
                             {% endif %}
                         </td>
                         <td>
-                            <form action="{{ url_for('instructor.delete_assignment', assignment_id=assignment._id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this assignment?');">
+                            <form action="{{ url_for('admin.delete_material', assignment_id=assignment._id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this material?');">
                                 <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
                             </form>
                         </td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="6" class="text-center">No assignments or materials uploaded yet.</td>
+                        <td colspan="7" class="text-center">No materials uploaded yet.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -76,7 +76,7 @@
 <div class="modal fade" id="uploadMaterialModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="POST" action="{{ url_for('instructor.manage_assignments') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ url_for('admin.manage_materials') }}" enctype="multipart/form-data">
                 <div class="modal-header bg-info text-white">
                     <h5 class="modal-title"><i class="bi bi-upload"></i> Upload Course Material</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>

@@ -84,3 +84,23 @@ class StudentUpdateProfileForm(FlaskForm):
             self.department.choices = [('', 'Select Department')] + [(dept['name'], dept['name']) for dept in db.departments.find()]
         else:
             self.department.choices = [('', 'Select Department')]
+
+class InstructorUpdateProfileForm(FlaskForm):
+    name = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=100), Regexp(r'^[A-Za-z\s]+$', message="Name must contain only alphabets and spaces.")])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    phone = StringField('Phone', validators=[DataRequired(), Length(min=10, max=15), Regexp(r'^\d+$', message="Phone number must contain only digits.")])
+    department = SelectField('Department', coerce=str, validators=[DataRequired()])
+    submit = SubmitField('Save Changes')
+
+    def __init__(self, *args, **kwargs):
+        super(InstructorUpdateProfileForm, self).__init__(*args, **kwargs)
+        db = get_db()
+        if db is not None:
+            self.department.choices = [('', 'Select Department')] + [(dept['name'], dept['name']) for dept in db.departments.find()]
+        else:
+            self.department.choices = [('', 'Select Department')]
+
+class AdminUpdateProfileForm(FlaskForm):
+    name = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=100), Regexp(r'^[A-Za-z\s]+$', message="Name must contain only alphabets and spaces.")])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Save Changes')

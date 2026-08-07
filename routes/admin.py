@@ -1,7 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
-from database.db import get_db
+from forms.auth_forms import AdminUpdateProfileForm
+from database.db import get_db, get_fs
 from werkzeug.security import generate_password_hash
+from werkzeug.utils import secure_filename
 from functools import wraps
 from bson.objectid import ObjectId
 import csv
@@ -38,7 +40,9 @@ def dashboard():
         {'$group': {'_id': '$department', 'count': {'$sum': 1}}}
     ]))
     
-    return render_template('admin/dashboard.html', stats=stats, dept_distribution=dept_distribution)
+    courses = list(db.courses.find())
+    
+    return render_template('admin/dashboard.html', stats=stats, dept_distribution=dept_distribution, courses=courses)
 
 @admin_bp.route('/students')
 @login_required
@@ -257,3 +261,176 @@ def export_students():
         headers={"Content-disposition": "attachment; filename=students_report.csv"}
     )
 
+@admin_bp.route('/profile')
+@login_required
+@admin_required
+def profile():
+    db = get_db()
+    admin_data = db.admins.find_one({'_id': ObjectId(current_user.id)})
+    return render_template('admin/profile.html', admin=admin_data)
+
+@admin_bp.route('/update_profile', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def update_profile():
+    db = get_db()
+    admin_data = db.admins.find_one({'_id': ObjectId(current_user.id)})
+    
+    form = AdminUpdateProfileForm()
+    
+    if form.validate_on_submit():
+        new_email = form.email.data
+        if new_email != admin_data['email'] and db.admins.find_one({'email': new_email}):
+            flash('Email address is already in use by another admin.', 'danger')
+            return redirect(url_for('admin.update_profile'))
+            
+        update_data = {
+            'name': form.name.data,
+            'email': new_email
+        }
+        
+        db.admins.update_one({'_id': ObjectId(current_user.id)}, {'$set': update_data})
+        current_user.user_data['name'] = form.name.data
+        current_user.user_data['email'] = new_email
+        flash('Profile updated successfully.', 'success')
+        return redirect(url_for('admin.profile'))
+        
+    elif request.method == 'GET':
+        form.name.data = admin_data['name']
+        form.email.data = admin_data['email']
+        
+    return render_template('admin/update_profile.html', form=form)
+
+@admin_bp.route('/assignments', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def manage_materials():
+    db = get_db()
+    all_courses = list(db.courses.find())
+    course_codes = [c['course_code'] for c in all_courses]
+    
+    if request.method == 'POST':
+        try:
+            file = request.files.get('file')
+            file_id = None
+            filename = None
+            if file and file.filename != '':
+                filename = secure_filename(file.filename)
+                fs = get_fs()
+                file_id = fs.put(file.read(), filename=filename, content_type=file.content_type)
+                
+            assignment_data = {
+                'course_code': request.form.get('course_code'),
+                'section_number': int(request.form.get('section_number', 1)),
+                'title': request.form.get('title'),
+                'description': request.form.get('description'),
+                'due_date': request.form.get('due_date'),
+                'file_id': file_id,
+                'filename': filename
+            }
+            db.assignments.insert_one(assignment_data)
+            flash('Material added successfully.', 'success')
+        except Exception as e:
+            print(f"Error adding material: {e}")
+            flash(f'An error occurred: {str(e)}', 'danger')
+            
+        return redirect(url_for('admin.manage_materials'))
+        
+    filter_course = request.args.get('course_code')
+    if filter_course and filter_course in course_codes:
+        assignments = list(db.assignments.find({'course_code': filter_course}))
+        selected_course = filter_course
+    else:
+        assignments = list(db.assignments.find())
+        selected_course = None
+        
+    return render_template('admin/materials.html', assignments=assignments, courses=all_courses, selected_course=selected_course)
+
+@admin_bp.route('/delete_assignment/<assignment_id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_material(assignment_id):
+    db = get_db()
+    try:
+        assignment = db.assignments.find_one({'_id': ObjectId(assignment_id)})
+        if assignment:
+            if assignment.get('file_id'):
+                fs = get_fs()
+                fs.delete(assignment['file_id'])
+            db.assignments.delete_one({'_id': ObjectId(assignment_id)})
+            flash('Material deleted successfully.', 'success')
+        else:
+            flash('Material not found.', 'danger')
+    except Exception as e:
+        print(f"Error deleting material: {e}")
+        flash('An error occurred while deleting the material.', 'danger')
+        
+    return redirect(url_for('admin.manage_materials'))
+
+@admin_bp.route('/quizzes', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def manage_quizzes():
+    db = get_db()
+    all_courses = list(db.courses.find())
+    course_codes = [c['course_code'] for c in all_courses]
+    
+    if request.method == 'POST':
+        quiz_data = {
+            'course_code': request.form.get('course_code'),
+            'title': request.form.get('title'),
+            'description': request.form.get('description'),
+            'time_limit': int(request.form.get('time_limit', 30)),
+            'status': 'Draft',
+            'questions': []
+        }
+        db.quizzes.insert_one(quiz_data)
+        flash('Quiz/Assignment created successfully.', 'success')
+        return redirect(url_for('admin.manage_quizzes'))
+        
+    filter_course = request.args.get('course_code')
+    if filter_course and filter_course in course_codes:
+        quizzes = list(db.quizzes.find({'course_code': filter_course}))
+        selected_course = filter_course
+    else:
+        quizzes = list(db.quizzes.find())
+        selected_course = None
+        
+    return render_template('admin/quizzes.html', quizzes=quizzes, courses=all_courses, selected_course=selected_course)
+
+@admin_bp.route('/delete_quiz/<quiz_id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_quiz(quiz_id):
+    db = get_db()
+    db.quizzes.delete_one({'_id': ObjectId(quiz_id)})
+    flash('Assignment deleted successfully.', 'success')
+    return redirect(url_for('admin.manage_quizzes'))
+
+@admin_bp.route('/view_material/<file_id>')
+@login_required
+@admin_required
+def view_material(file_id):
+    db = get_db()
+    try:
+        assignment = db.assignments.find_one({'file_id': ObjectId(file_id)})
+    except:
+        assignment = None
+        
+    if not assignment:
+        flash('Material not found.', 'danger')
+        return redirect(url_for('admin.manage_materials'))
+        
+    return render_template('admin/view_material.html', assignment=assignment)
+
+@admin_bp.route('/view_quiz/<quiz_id>')
+@login_required
+@admin_required
+def view_quiz(quiz_id):
+    db = get_db()
+    quiz = db.quizzes.find_one({'_id': ObjectId(quiz_id)})
+    if not quiz:
+        flash('Quiz not found.', 'danger')
+        return redirect(url_for('admin.manage_quizzes'))
+        
+    return render_template('admin/view_quiz.html', quiz=quiz)
