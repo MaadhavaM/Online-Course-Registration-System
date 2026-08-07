@@ -415,4 +415,7 @@ def certificate(course_code):
     # Use today's date or completion date if available
     date = datetime.now().strftime("%B %d, %Y")
     
-    return render_template('student/certificate.html', course=course, student_name=student_name, grade=avg_score, date=date)
+    instructor = db.instructors.find_one({'instructor_id': course.get('instructor_id')})
+    instructor_name = instructor.get('name') if instructor else "Course Instructor"
+    
+    return render_template('student/certificate.html', course=course, student_name=student_name, grade=avg_score, date=date, instructor_name=instructor_name)

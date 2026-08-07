@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Verify Login OTP - UniCore{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center mt-5">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-lg border-0 rounded-lg">
+            <div class="card-header bg-primary text-white text-center py-3">
+                <h3 class="mb-0 fw-bold"><i class="bi bi-shield-lock"></i> Verify Login OTP</h3>
+            </div>
+            <div class="card-body p-4 text-center">
+                <i class="bi bi-shield-check display-1 text-primary mb-3"></i>
+                <p class="text-muted mb-4">We've generated a 6-digit OTP for your security. Please enter it below to complete login.</p>
+                
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-4 text-start">
+                        {{ form.otp.label(class="form-label fw-bold") }}
+                        {{ form.otp(class="form-control form-control-lg text-center fw-bold letter-spacing-wide", placeholder="------", maxlength="6") }}
+                        {% if form.otp.errors %}
+                        <div class="text-danger small mt-1 text-start">
+                            {% for error in form.otp.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        {{ form.submit(class="btn btn-primary btn-lg fw-bold") }}
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center py-3 bg-light">
+                <div class="small">
+                    Didn't receive the OTP? <a href="{{ url_for('auth.login') }}">Go back to Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

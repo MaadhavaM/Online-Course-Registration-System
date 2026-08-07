@@ -23,35 +23,92 @@ def login():
         db = get_db()
         email = form.email.data
         password = form.password.data
-        role = form.role.data
 
         user_data = None
-        if role == 'admin':
+        role = None
+
+        if db.admins.find_one({'email': email}):
             user_data = db.admins.find_one({'email': email})
-        elif role == 'instructor':
+            role = 'admin'
+        elif db.instructors.find_one({'email': email}):
             user_data = db.instructors.find_one({'email': email})
-        elif role == 'student':
+            role = 'instructor'
+        elif db.students.find_one({'email': email}):
             user_data = db.students.find_one({'email': email})
+            role = 'student'
 
         if user_data and verify_password(user_data['password'], password):
-            user_obj = User(user_data, role)
-            login_user(user_obj, remember=form.remember.data)
-            flash('Logged in successfully.', 'success')
-            
-            next_page = request.args.get('next')
-            if next_page:
-                return redirect(next_page)
+            if role in ['admin', 'instructor']:
+                otp = str(random.randint(100000, 999999))
+                session['login_pending_email'] = email
+                session['login_pending_role'] = role
+                session['login_pending_remember'] = form.remember.data
+                session['login_pending_otp'] = otp
                 
-            if role == 'admin':
-                return redirect(url_for('admin.dashboard'))
-            elif role == 'instructor':
-                return redirect(url_for('instructor.dashboard'))
+                flash(f'MOCK SMS: Your login OTP is {otp}', 'info')
+                return redirect(url_for('auth.login_verify_otp'))
             else:
+                user_obj = User(user_data, role)
+                login_user(user_obj, remember=form.remember.data)
+                flash('Logged in successfully.', 'success')
+                
+                next_page = request.args.get('next')
+                if next_page:
+                    return redirect(next_page)
                 return redirect(url_for('student.dashboard'))
         else:
             flash('Invalid email or password', 'danger')
 
     return render_template('auth/login.html', form=form)
+
+@auth_bp.route('/login-verify-otp', methods=['GET', 'POST'])
+def login_verify_otp():
+    if 'login_pending_otp' not in session:
+        flash('No login in progress or session expired. Please log in again.', 'warning')
+        return redirect(url_for('auth.login'))
+        
+    from forms.auth_forms import LoginVerifyOTPForm
+    form = LoginVerifyOTPForm()
+    
+    if form.validate_on_submit():
+        if form.otp.data == session.get('login_pending_otp'):
+            db = get_db()
+            email = session.get('login_pending_email')
+            role = session.get('login_pending_role')
+            remember = session.get('login_pending_remember')
+            
+            user_data = None
+            if role == 'admin':
+                user_data = db.admins.find_one({'email': email})
+            elif role == 'instructor':
+                user_data = db.instructors.find_one({'email': email})
+                
+            if user_data:
+                user_obj = User(user_data, role)
+                login_user(user_obj, remember=remember)
+                
+                session.pop('login_pending_email', None)
+                session.pop('login_pending_role', None)
+                session.pop('login_pending_remember', None)
+                session.pop('login_pending_otp', None)
+                
+                flash('Logged in successfully.', 'success')
+                
+                next_page = request.args.get('next')
+                if next_page:
+                    return redirect(next_page)
+                    
+                if role == 'admin':
+                    return redirect(url_for('admin.dashboard'))
+                else:
+                    return redirect(url_for('instructor.dashboard'))
+            else:
+                flash('Error retrieving user data.', 'danger')
+                return redirect(url_for('auth.login'))
+        else:
+            flash('Invalid OTP. Please try again.', 'danger')
+            
+    return render_template('auth/login_verify_otp.html', form=form)
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():

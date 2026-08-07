@@ -4,11 +4,6 @@ from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationE
 from database.db import get_db
 
 class LoginForm(FlaskForm):
-    role = SelectField('Role', choices=[('student', 'Student'), ('instructor', 'Instructor'), ('admin', 'Admin')], validators=[DataRequired()])
-    # We will use either email or username/id for login. Let's use Email for all as per standard, or specific ID.
-    # The prompt specifies email for Admins and Instructors, and maybe ID for students?
-    # Admins: username, email. Students: student_id, email. Instructors: instructor_id, email.
-    # Let's use Email for all for simplicity.
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
@@ -69,3 +64,7 @@ class ResetPasswordForm(FlaskForm):
     password = PasswordField('New Password', validators=[DataRequired(), Length(min=6)])
     confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('password', message='Passwords must match.')])
     submit = SubmitField('Reset Password')
+
+class LoginVerifyOTPForm(FlaskForm):
+    otp = StringField('Enter 6-Digit OTP', validators=[DataRequired(), Length(min=6, max=6), Regexp(r'^\d+$', message="OTP must contain only digits.")])
+    submit = SubmitField('Verify Login')
