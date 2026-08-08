@@ -102,8 +102,12 @@
                         <label class="form-label fw-bold">Description</label>
                         <textarea class="form-control" name="description" rows="3"></textarea>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Due Date (If Assignment)</label>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="requiresSubmission" name="requires_submission" onchange="document.getElementById('dueDateDiv').style.display = this.checked ? 'block' : 'none';">
+                        <label class="form-check-label fw-bold" for="requiresSubmission">Does this material require a student submission? (Assignment)</label>
+                    </div>
+                    <div class="mb-3" id="dueDateDiv" style="display: none;">
+                        <label class="form-label fw-bold">Due Date</label>
                         <input type="date" class="form-control" name="due_date">
                     </div>
                     <div class="mb-3">
