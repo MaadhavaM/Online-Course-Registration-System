@@ -35,7 +35,7 @@
                         <li><a class="dropdown-item py-2 fw-medium" href="{{ url_for('instructor.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
                         <li><a class="dropdown-item py-2 fw-medium" href="{{ url_for('instructor.manage_courses') }}"><i class="bi bi-journal-bookmark me-2"></i>My Courses</a></li>
                         <li><a class="dropdown-item py-2 fw-medium" href="{{ url_for('instructor.manage_assignments') }}"><i class="bi bi-file-earmark-text me-2"></i>Materials</a></li>
-                        <li><a class="dropdown-item py-2 fw-medium" href="{{ url_for('instructor.manage_quizzes') }}"><i class="bi bi-file-earmark-check me-2"></i>Assignments</a></li>
+                        <li><a class="dropdown-item py-2 fw-medium" href="{{ url_for('instructor.manage_quizzes') }}"><i class="bi bi-file-earmark-check me-2"></i>Assessments</a></li>
                         <li><a class="dropdown-item py-2 fw-medium" href="{{ url_for('instructor.view_students') }}"><i class="bi bi-people me-2"></i>Students</a></li>
                         {% elif current_user.role == 'student' %}
                         <li><a class="dropdown-item py-2 fw-medium" href="{{ url_for('student.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>

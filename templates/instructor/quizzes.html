@@ -1,24 +1,24 @@
 {% extends "base.html" %}
-{% block title %}Manage Quizzes - UniCore{% endblock %}
+{% block title %}Manage Assessments - UniCore{% endblock %}
 
 {% block content %}
 <div class="row mb-4 align-items-center">
     <div class="col-md-6">
-        <h2 class="fw-bold">Manage Quizzes</h2>
+        <h2 class="fw-bold">Manage Assessments</h2>
     </div>
     <div class="col-md-6 text-end">
         <button class="btn btn-danger" onclick="openFinalAssessmentModal()">
             <i class="bi bi-star-fill"></i> Create Final Assessment
         </button>
         <button class="btn btn-primary ms-2" onclick="openRegularQuizModal()">
-            <i class="bi bi-plus-circle"></i> Create Quiz
+            <i class="bi bi-plus-circle"></i> Create Assessment
         </button>
     </div>
 </div>
 
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h6 class="m-0 fw-bold text-primary">Your Quizzes</h6>
+        <h6 class="m-0 fw-bold text-primary">Your Assessments</h6>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -43,21 +43,21 @@
                             {% if quiz.is_final_exam %}
                                 <span class="badge bg-danger">Final Assessment</span>
                             {% else %}
-                                <span class="badge bg-secondary">Quiz</span>
+                                <span class="badge bg-secondary">Assessment</span>
                             {% endif %}
                         </td>
                         <td>{{ quiz.questions|length }}</td>
                         <td>
                             <a href="{{ url_for('instructor.edit_quiz', quiz_id=quiz._id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i> Edit</a>
                             <a href="{{ url_for('instructor.quiz_results', quiz_id=quiz._id) }}" class="btn btn-sm btn-outline-info"><i class="bi bi-bar-chart"></i> Results</a>
-                            <form action="{{ url_for('instructor.delete_quiz', quiz_id=quiz._id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this quiz and all its submissions?');">
-                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                            <form action="{{ url_for('instructor.delete_quiz', quiz_id=quiz._id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this assessment and all its submissions?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Delete</button>
                             </form>
                         </td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="4" class="text-center">No quizzes found. Create one above!</td>
+                        <td colspan="6" class="text-center">No assessments found. Create one above!</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -72,7 +72,7 @@
         <div class="modal-content">
             <form method="POST" action="{{ url_for('instructor.manage_quizzes') }}" id="quizForm">
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">Create New Quiz</h5>
+                    <h5 class="modal-title">Create New Assessment</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -87,7 +87,7 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Quiz Title</label>
+                            <label class="form-label fw-bold">Assessment Title</label>
                             <input type="text" class="form-control" name="title" required>
                         </div>
                     </div>
@@ -117,7 +117,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Quiz</button>
+                    <button type="submit" class="btn btn-primary">Save Assessment</button>
                 </div>
             </form>
         </div>
@@ -210,7 +210,7 @@
         titleInput.value = "";
         
         const modalTitle = document.querySelector('#createQuizModal .modal-title');
-        modalTitle.innerHTML = 'Create New Quiz';
+        modalTitle.innerHTML = 'Create New Assessment';
         
         document.getElementById('sectionNumberDiv').style.display = 'block';
         document.getElementById('sectionNumberInput').required = true;
