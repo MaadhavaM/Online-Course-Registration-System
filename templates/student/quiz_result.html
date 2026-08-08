@@ -13,35 +13,63 @@
                 <h4 class="mb-4">You have completed the quiz for <strong>{{ course.course_code }}</strong></h4>
                 
                 <div class="row justify-content-center mb-4">
-                    <div class="col-6">
+                    <div class="{% if quiz.is_final_exam %}col-12 col-md-8{% else %}col-6{% endif %}">
                         <div class="p-3 border rounded bg-light">
                             <div class="text-muted text-uppercase fw-bold mb-1 fs-6">Your Score</div>
                             <div class="h2 fw-bold text-{{ 'success' if submission.status == 'Pass' else 'danger' }}">{{ submission.score_percentage | round(1) }}%</div>
                         </div>
                     </div>
+                    {% if not quiz.is_final_exam %}
                     <div class="col-6">
                         <div class="p-3 border rounded bg-light">
                             <div class="text-muted text-uppercase fw-bold mb-1 fs-6">Credits Earned</div>
                             <div class="h2 fw-bold text-info">{{ submission.earned_credits }} <span class="fs-6 text-muted fw-normal">/ {{ course.credits }}</span></div>
                         </div>
                     </div>
+                    {% endif %}
                 </div>
                 
                 <p class="text-muted fs-5 mb-5">
-                    {% if submission.score_percentage >= 90 %}
-                        Outstanding! You earned full credits for this course.
-                    {% elif submission.score_percentage >= 75 %}
-                        Great job! You earned 75% of the course credits.
-                    {% elif submission.score_percentage >= 60 %}
-                        Good effort! You earned 50% of the course credits.
-                    {% elif submission.score_percentage >= 50 %}
-                        You passed and earned 25% of the course credits.
+                    {% if quiz.is_final_exam %}
+                        {% if submission.score_percentage >= 50 %}
+                            Congratulations on passing the final assessment! You have completed this course.
+                        {% else %}
+                            Unfortunately, you did not pass the final assessment. You need at least 50% to pass. Don't worry, you can always retake it!
+                        {% endif %}
                     {% else %}
-                        Unfortunately, you did not pass. You need at least 50% to earn credits. Don't worry, you can always retake the quiz!
+                        {% if submission.score_percentage >= 90 %}
+                            Outstanding! You earned full credits for this section.
+                        {% elif submission.score_percentage >= 75 %}
+                            Great job! You earned 75% of the section credits.
+                        {% elif submission.score_percentage >= 60 %}
+                            Good effort! You earned 50% of the section credits.
+                        {% elif submission.score_percentage >= 50 %}
+                            You passed and earned 25% of the section credits.
+                        {% else %}
+                            Unfortunately, you did not pass. You need at least 50% to earn credits. Don't worry, you can always retake the quiz!
+                        {% endif %}
                     {% endif %}
                 </p>
                 
-                <div class="d-grid gap-2">
+                {% if not quiz.is_final_exam and submission.answers %}
+                <div class="mt-4 text-start">
+                    <h5 class="fw-bold border-bottom pb-2 mb-4">Question Review</h5>
+                    {% for q in quiz.questions %}
+                        {% set ans = submission.answers[loop.index0] %}
+                        {% if ans != q.correct_option %}
+                        <div class="card border-danger mb-3 shadow-sm">
+                            <div class="card-body">
+                                <h6 class="fw-bold"><i class="bi bi-x-circle text-danger me-2"></i>Q{{ loop.index }}: {{ q.text }}</h6>
+                                <p class="mb-1 text-muted">You selected: <span class="text-danger fw-medium">{{ q.options[ans] if ans >= 0 else 'No answer' }}</span></p>
+                                <p class="mb-0 text-success fw-bold"><i class="bi bi-check-circle me-1"></i>Correct Answer: {{ q.options[q.correct_option] }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <div class="d-grid gap-2 mt-4">
                     <a href="{{ url_for('student.dashboard') }}" class="btn btn-primary btn-lg fw-bold rounded-pill">
                         <i class="bi bi-house-door"></i> Return to Dashboard
                     </a>

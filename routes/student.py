@@ -244,11 +244,12 @@ def view_materials(course_code):
     grouped_sections = {}
     for sec in sections:
         grouped_sections[sec] = {
-            'regular_items': [i for i in all_items if i.get('section_number', 1) == sec and not i.get('is_final_exam')],
-            'final_exams': [i for i in all_items if i.get('section_number', 1) == sec and i.get('is_final_exam')]
+            'regular_items': [i for i in all_items if i.get('section_number', 1) == sec and not i.get('is_final_exam')]
         }
+        
+    final_exams = [i for i in all_items if i.get('is_final_exam')]
     
-    return render_template('student/materials.html', course=course, grouped_sections=grouped_sections, highest_unlocked=highest_unlocked, all_regular_completed=all_regular_sections_completed, quiz_scores=quiz_scores, assignment_subs_map=assignment_subs_map)
+    return render_template('student/materials.html', course=course, grouped_sections=grouped_sections, final_exams=final_exams, highest_unlocked=highest_unlocked, all_regular_completed=all_regular_sections_completed, quiz_scores=quiz_scores, assignment_subs_map=assignment_subs_map)
 
 @student_bp.route('/view_material/<file_id>')
 @login_required
@@ -348,9 +349,11 @@ def take_quiz(quiz_id):
         questions = quiz.get('questions', [])
         correct_count = 0
         total_q = len(questions)
+        answers_submitted = []
         
         for i, q in enumerate(questions):
             ans = request.form.get(f'q{i}')
+            answers_submitted.append(int(ans) if ans is not None else -1)
             if ans is not None and int(ans) == q['correct_option']:
                 correct_count += 1
                 
@@ -377,6 +380,7 @@ def take_quiz(quiz_id):
             'score_percentage': score_percentage,
             'earned_credits': earned_credits,
             'status': status,
+            'answers': answers_submitted,
             'attempt_date': datetime.utcnow()
         })
         

@@ -7,9 +7,6 @@
         <h2 class="fw-bold">Quiz: {{ quiz.title }}</h2>
         <p class="text-muted mb-0">Course: {{ course.course_code }} - {{ course.course_name }}</p>
     </div>
-    <div class="col-md-4 text-end">
-        <span class="badge bg-primary fs-6">Credits Available: {{ course.credits }}</span>
-    </div>
 </div>
 
 <div class="row justify-content-center">
@@ -19,10 +16,6 @@
                 <h5 class="mb-0 fw-bold"><i class="bi bi-ui-checks"></i> Answer the following questions</h5>
             </div>
             <div class="card-body p-4">
-                <div class="alert alert-info py-2 mb-4">
-                    <strong>Credit System:</strong> 
-                    &ge;90%: Full Credits &bull; &ge;75%: 75% Credits &bull; &ge;60%: 50% Credits &bull; &ge;50%: 25% Credits
-                </div>
                 
                 <form method="POST" action="{{ url_for('student.take_quiz', quiz_id=quiz._id) }}">
                     {% for q in quiz.questions %}
