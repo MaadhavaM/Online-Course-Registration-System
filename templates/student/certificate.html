@@ -9,7 +9,7 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&family=Pinyon+Script&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -62,9 +62,9 @@
             position: relative;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            text-align: center;
-            padding: 50px 60px;
+            align-items: flex-start;
+            text-align: left;
+            padding: 40px 60px;
             background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.95) 100%);
         }
 
@@ -81,72 +81,65 @@
         .corner-bl { bottom: -10px; left: -10px; border-right: none; border-top: none; }
         .corner-br { bottom: -10px; right: -10px; border-left: none; border-top: none; }
 
-        .cert-header {
-            font-family: 'Playfair Display', serif;
-            font-size: 3.5rem;
+        .uni-logo {
+            font-family: 'Montserrat', sans-serif;
             font-weight: 700;
-            color: #0f172a;
-            letter-spacing: 6px;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-            position: relative;
+            color: #b91c1c; /* Red, similar to oracle */
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            letter-spacing: -0.5px;
+        }
+        .uni-logo span {
+            font-weight: 400;
+            color: #334155;
+            display: block;
+            font-size: 1.2rem;
+            margin-top: -2px;
+            letter-spacing: 0;
         }
 
-        .cert-header::after {
-            content: '';
-            display: block;
-            width: 100px;
-            height: 3px;
-            background: #d4af37;
-            margin: 15px auto 0;
+        .cert-header {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: #0f172a;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
         }
 
         .cert-subheader {
-            font-size: 1rem;
-            color: #64748b;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            margin-bottom: 40px;
-            margin-top: 15px;
+            font-size: 1.5rem;
+            color: #1e293b;
+            letter-spacing: 1px;
+            margin-bottom: 50px;
             font-weight: 500;
-        }
-
-        .presented-to {
             font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 1.4rem;
-            color: #475569;
-            margin-bottom: 20px;
         }
 
         .student-name {
-            font-family: 'Pinyon Script', cursive;
-            font-size: 5.5rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 600;
             color: #0f172a;
             margin-bottom: 25px;
             line-height: 1;
-            padding: 0 40px;
-            position: relative;
-            display: inline-block;
-        }
-
-        .completion-text {
-            font-size: 1.1rem;
-            color: #475569;
-            margin-bottom: 30px;
-            max-width: 75%;
-            line-height: 1.8;
-            font-weight: 400;
         }
 
         .course-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            font-weight: 700;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #334155;
+            margin-bottom: 35px;
+        }
+
+        .completion-text {
+            font-size: 1.2rem;
             color: #1e293b;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            margin-bottom: 30px;
+            max-width: 85%;
+            line-height: 1.8;
+            font-weight: 400;
         }
 
         .grade-badge {
@@ -155,14 +148,15 @@
             justify-content: center;
             background: linear-gradient(135deg, #d4af37 0%, #aa8c2c 100%);
             color: #fff;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
-            padding: 8px 24px;
+            padding: 6px 18px;
             border-radius: 50px;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
             letter-spacing: 1.5px;
             text-transform: uppercase;
             box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            margin-top: -10px;
         }
 
         .footer-section {
@@ -171,46 +165,51 @@
             justify-content: space-between;
             align-items: flex-end;
             margin-top: auto;
-            padding: 0 40px;
             position: relative;
             z-index: 2;
         }
 
-        .signature-block {
+        .signature-block-left {
+            text-align: left;
+            width: 250px;
+        }
+
+        .signature-block-right {
+            text-align: right;
+            width: 300px;
+        }
+
+        .signature-block-center {
             text-align: center;
-            width: 260px;
+            width: 250px;
         }
 
         .signature-line {
-            border-top: 1px solid #475569;
-            margin-bottom: 12px;
+            border-top: 1px solid #94a3b8;
+            margin-bottom: 8px;
         }
 
         .signature-name {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            color: #0f172a;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            color: #334155;
             font-size: 1.1rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
         }
 
         .signature-title {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 4px;
+            margin-top: 2px;
         }
         
         .seal {
             position: absolute;
             top: 40px;
             right: 40px;
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             z-index: 1;
-            opacity: 0.9;
+            opacity: 1;
         }
 
         /* Print Controls */
@@ -332,42 +331,46 @@
                     <path d="M100,50 L115,85 L150,100 L115,115 L100,150 L85,115 L50,100 L85,85 Z" fill="url(#goldGrad)"/>
                 </svg>
                 
-                <div class="cert-header">Certificate of Excellence</div>
-                <div class="cert-subheader">UniCore Online Education Platform</div>
+                <div class="uni-logo">
+                    UniCore
+                    <span>University</span>
+                </div>
                 
-                <div class="presented-to">This honor is hereby proudly presented to</div>
+                <div class="cert-header">UniCore Certified Foundations Associate</div>
+                <div class="cert-subheader">Certificate of Recognition</div>
                 
                 <div class="student-name">{{ student_name }}</div>
                 
+                <div class="course-name">UniCore {{ course.course_name }} Certified Foundations Associate</div>
+                
                 <div class="completion-text">
-                    For outstanding dedication and having successfully fulfilled all rigorous requirements, assessments, and academic standards set forth in the completion of the <strong>{{ course.get('duration', '16 weeks') }}</strong> program:
+                    This certifies that the above named has successfully completed the <strong>{{ course.get('duration', '16 weeks') }}</strong> program and is recognized by UniCore Corporation as UniCore Certified.
                 </div>
                 
-                <div class="course-name">{{ course.course_name }}</div>
-                
+                <!-- Grade display mapped seamlessly into the design -->
                 <div class="grade-badge">
                     <i class="bi bi-award-fill me-2"></i> Overall Score: {{ grade|round(1) }}%
                 </div>
                 
                 <div class="footer-section">
-                    <div class="signature-block">
+                    <div class="signature-block-left">
+                        <div class="signature-name" style="margin-bottom: 5px;">{{ date }}</div>
                         <div class="signature-line"></div>
-                        <div class="signature-name">{{ date }}</div>
-                        <div class="signature-title">Date of Issuance<br><span style="font-size: 0.75rem; color: #94a3b8; font-family: 'Montserrat', sans-serif;">Course {{ course.course_code }}</span></div>
+                        <div class="signature-title">Date</div>
                     </div>
                     
-                    <div class="signature-block">
-                        <div style="font-family: 'Pinyon Script', cursive; font-size: 2.5rem; color: #0f172a; margin-bottom: -15px;">Administration</div>
+                    <div class="signature-block-center">
+                        <div style="font-family: 'Pinyon Script', cursive; font-size: 2.2rem; color: #0f172a; margin-bottom: -10px; margin-top: -20px;">Administration</div>
                         <div class="signature-line"></div>
                         <div class="signature-name">UniCore Admin</div>
                         <div class="signature-title">Official Platform</div>
                     </div>
                     
-                    <div class="signature-block">
-                        <div style="font-family: 'Pinyon Script', cursive; font-size: 2.5rem; color: #0f172a; margin-bottom: -15px;">{{ instructor_name }}</div>
+                    <div class="signature-block-right">
+                        <div style="font-family: 'Pinyon Script', cursive; font-size: 2.2rem; color: #0f172a; margin-bottom: -10px; margin-top: -20px;">{{ instructor_name }}</div>
                         <div class="signature-line"></div>
-                        <div class="signature-name">Course Instructor</div>
-                        <div class="signature-title">Academic Lead</div>
+                        <div class="signature-name">{{ instructor_name }}</div>
+                        <div class="signature-title">Senior Vice President, UniCore University</div>
                     </div>
                 </div>
                 
