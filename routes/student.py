@@ -448,7 +448,10 @@ def certificate(course_code):
     instructor = db.instructors.find_one({'instructor_id': course.get('instructor_id')})
     instructor_name = instructor.get('name') if instructor else "Course Instructor"
     
-    return render_template('student/certificate.html', course=course, student_name=student_name, grade=avg_score, date=date, instructor_name=instructor_name)
+    admin = db.admins.find_one({})
+    admin_name = admin.get('name') if admin else "System Administrator"
+    
+    return render_template('student/certificate.html', course=course, student_name=student_name, grade=avg_score, date=date, instructor_name=instructor_name, admin_name=admin_name)
 
 @student_bp.route('/profile')
 @login_required
