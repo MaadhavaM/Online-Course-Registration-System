@@ -106,7 +106,7 @@
                     
                     <hr>
                     <h5 class="fw-bold mb-3">Questions</h5>
-                    <div id="questionsContainer" class="d-flex overflow-auto pb-3 px-1" style="gap: 1rem; scroll-snap-type: x mandatory;">
+                    <div id="questionsContainer" class="d-flex flex-column pb-3 px-1" style="gap: 1rem; max-height: 400px; overflow-y: auto;">
                         <!-- Questions will be added here -->
                     </div>
                     
@@ -132,7 +132,7 @@
         document.getElementById('questionCount').value = qCount;
         
         const qHtml = `
-            <div class="card border-secondary shadow-sm flex-shrink-0" id="q${qCount}_card" style="width: 500px; scroll-snap-align: start;">
+            <div class="card border-secondary shadow-sm flex-shrink-0" id="q${qCount}_card" style="width: 100%;">
                 <div class="card-header bg-light d-flex justify-content-between align-items-center">
                     <span class="fw-bold">Question ${qCount}</span>
                     <button type="button" class="btn btn-sm btn-danger py-0" onclick="removeQuestion(${qCount})">&times;</button>
