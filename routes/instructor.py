@@ -170,34 +170,6 @@ def manage_assignments():
         
     return render_template('instructor/assignments.html', assignments=assignments, courses=my_courses, selected_course=selected_course)
 
-@instructor_bp.route('/edit_assignment/<assignment_id>', methods=['POST'])
-@login_required
-@instructor_required
-def edit_assignment(assignment_id):
-    db = get_db()
-    
-    try:
-        requires_submission = request.form.get('requires_submission') == 'on'
-        due_date = request.form.get('due_date') if requires_submission else None
-        
-        update_data = {
-            'title': request.form.get('title'),
-            'description': request.form.get('description'),
-            'requires_submission': requires_submission,
-            'due_date': due_date
-        }
-        
-        db.assignments.update_one(
-            {'_id': ObjectId(assignment_id)},
-            {'$set': update_data}
-        )
-        flash('Assignment updated successfully.', 'success')
-    except Exception as e:
-        print(f"Error updating assignment: {e}")
-        flash(f'An error occurred while updating: {str(e)}', 'danger')
-        
-    return redirect(url_for('instructor.manage_assignments'))
-
 @instructor_bp.route('/delete_assignment/<assignment_id>', methods=['POST'])
 @login_required
 @instructor_required
