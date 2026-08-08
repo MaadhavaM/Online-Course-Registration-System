@@ -143,7 +143,6 @@ def manage_assignments():
             
             assignment_data = {
                 'course_code': request.form.get('course_code'),
-                'section_number': int(request.form.get('section_number', 1)),
                 'title': request.form.get('title'),
                 'description': request.form.get('description'),
                 'requires_submission': requires_submission,
@@ -178,7 +177,6 @@ def edit_assignment(assignment_id):
         requires_submission = request.form.get('requires_submission') == 'on'
         update_data = {
             'course_code': request.form.get('course_code'),
-            'section_number': int(request.form.get('section_number', 1)),
             'title': request.form.get('title'),
             'description': request.form.get('description'),
             'requires_submission': requires_submission
@@ -376,7 +374,6 @@ def manage_quizzes():
         quiz_data = {
             'course_code': course_code,
             'instructor_id': instructor_id,
-            'section_number': int(request.form.get('section_number', 1)),
             'is_final_exam': request.form.get('is_final_exam') == 'on',
             'title': title,
             'questions': questions

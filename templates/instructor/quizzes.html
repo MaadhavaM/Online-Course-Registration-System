@@ -27,7 +27,6 @@
                     <tr>
                         <th>Title</th>
                         <th>Course Code</th>
-                        <th>Section</th>
                         <th>Type</th>
                         <th>Questions</th>
                         <th>Actions</th>
@@ -37,9 +36,8 @@
                     {% for quiz in quizzes %}
                     <tr>
                         <td>{{ quiz.title }}</td>
-                        <td>{{ quiz.course_code }}</td>
-                        <td><span class="badge bg-primary">Section {{ quiz.section_number|default(1) }}</span></td>
-                        <td>
+                        <td><span class="badge bg-secondary">{{ quiz.course_code }}</span></td>
+                        <td class="fw-bold">
                             {% if quiz.is_final_exam %}
                                 <span class="badge bg-danger">Final Assessment</span>
                             {% else %}
@@ -92,14 +90,10 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Section Number</label>
-                            <input type="number" class="form-control" name="section_number" value="1" min="1" required>
-                        </div>
-                        <div class="col-md-6 d-flex align-items-end pb-2">
+                        <div class="col-12 d-flex align-items-center">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="isFinalExam" name="is_final_exam">
-                                <label class="form-check-label fw-bold" for="isFinalExam">Is this the Final Assessment (Certificate Test)?</label>
+                                <label class="form-check-label fw-bold ms-2" for="isFinalExam">Is this the Final Assessment (Certificate Test)?</label>
                             </div>
                         </div>
                     </div>
