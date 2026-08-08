@@ -38,7 +38,7 @@
                         <td><span class="badge bg-primary">Section {{ quiz.section_number|default(1) }}</span></td>
                         <td>
                             {% if quiz.is_final_exam %}
-                                <span class="badge bg-danger">Final Exam</span>
+                                <span class="badge bg-danger">Final Assessment</span>
                             {% else %}
                                 <span class="badge bg-secondary">Quiz</span>
                             {% endif %}
@@ -96,7 +96,7 @@
                         <div class="col-md-6 d-flex align-items-end pb-2">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="isFinalExam" name="is_final_exam">
-                                <label class="form-check-label fw-bold" for="isFinalExam">Is this the Final Exam?</label>
+                                <label class="form-check-label fw-bold" for="isFinalExam">Is this the Final Assessment (Certificate Test)?</label>
                             </div>
                         </div>
                     </div>
