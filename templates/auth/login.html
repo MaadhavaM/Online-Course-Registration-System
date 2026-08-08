@@ -1,68 +1,69 @@
 {% extends "base.html" %}
 {% block title %}Login - UniCore{% endblock %}
 
-<div class="auth-bg d-flex align-items-center justify-content-center py-5" style="min-height: calc(100vh - 80px); margin-top: -80px; padding-top: 120px !important;">
-    <div class="container auth-content">
-        <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-5">
-                <div class="card glass-panel border-0 text-center p-4 p-sm-5">
-                    
+{% block content %}
+<div class="row justify-content-center align-items-center h-100 mt-5">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow-lg border-0 rounded-lg">
+            <div class="card-header bg-primary text-white text-center py-3">
+                <h3 class="mb-0 fw-bold"><i class="bi bi-box-arrow-in-right"></i> Sign In</h3>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+
+
+                    <div class="mb-3">
+                        {{ form.email.label(class="form-label fw-bold") }}
+                        {{ form.email(class="form-control", placeholder="Enter your email") }}
+                        {% if form.email.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in form.email.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
                     <div class="mb-4">
-                        <i class="bi bi-box-arrow-in-right fs-1 text-gradient mb-2 d-inline-block"></i>
-                        <h2 class="fw-bold mb-1">Welcome Back</h2>
-                        <p class="text-muted fs-7">Sign in to continue your learning journey.</p>
+                        {{ form.password.label(class="form-label fw-bold") }}
+                        {{ form.password(class="form-control", placeholder="Enter your password") }}
+                        {% if form.password.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in form.password.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
                     </div>
 
-                    <form method="POST" action="" class="text-start">
-                        {{ form.hidden_tag() }}
+                    <div class="mb-3 form-check">
+                        {{ form.remember(class="form-check-input") }}
+                        {{ form.remember.label(class="form-check-label") }}
+                    </div>
 
-                        <div class="mb-3">
-                            {{ form.email.label(class="form-label fw-bold text-muted small") }}
-                            {{ form.email(class="form-control form-control-lg", placeholder="name@example.com") }}
-                            {% if form.email.errors %}
-                            <div class="text-danger small mt-1">
-                                {% for error in form.email.errors %}<span>{{ error }}</span>{% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="mb-4">
-                            <div class="d-flex justify-content-between">
-                                {{ form.password.label(class="form-label fw-bold text-muted small") }}
-                                <a href="{{ url_for('auth.forgot_password') }}" class="small text-decoration-none" style="color: var(--accent-primary);">Forgot password?</a>
-                            </div>
-                            {{ form.password(class="form-control form-control-lg", placeholder="Enter your password") }}
-                            {% if form.password.errors %}
-                            <div class="text-danger small mt-1">
-                                {% for error in form.password.errors %}<span>{{ error }}</span>{% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="mb-4 form-check">
-                            {{ form.remember(class="form-check-input shadow-none") }}
-                            {{ form.remember.label(class="form-check-label text-muted small") }}
-                        </div>
-
-                        <div class="d-grid mb-4">
-                            {{ form.submit(class="btn btn-primary-custom btn-lg") }}
-                        </div>
-                        
-                        <div class="position-relative mb-4">
-                            <hr class="opacity-25">
-                            <span class="position-absolute top-50 start-50 translate-middle px-3 small text-muted fw-medium" style="background: var(--glass-bg);">Or continue with</span>
-                        </div>
-                        
-                        <div class="d-grid mb-2">
-                            <a href="{{ url_for('auth.login_google') }}" class="btn btn-outline-custom btn-lg d-flex align-items-center justify-content-center" style="border-color: #e2e8f0; color: var(--text-main); background: white;">
-                                <i class="bi bi-google me-2 text-danger"></i> Google
-                            </a>
-                        </div>
-                    </form>
+                    <div class="d-grid gap-2">
+                        {{ form.submit(class="btn btn-primary btn-lg fw-bold") }}
+                    </div>
                     
-                    <div class="mt-4 pt-3 border-top border-light">
-                        <p class="text-muted small mb-0">Don't have an account? <a href="{{ url_for('auth.register') }}" class="fw-bold text-decoration-none" style="color: var(--accent-primary);">Sign up</a></p>
+                    <div class="text-center my-3 position-relative">
+                        <hr class="text-muted">
+                        <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small fw-bold">OR</span>
                     </div>
+                    
+                    <div class="d-grid gap-2 mb-2">
+                        <a href="{{ url_for('auth.login_google') }}" class="btn btn-outline-dark btn-lg fw-bold d-flex align-items-center justify-content-center">
+                            <i class="bi bi-google me-2 text-danger"></i> Continue with Google
+                        </a>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center py-3 bg-light">
+                <div class="small">
+                    <a href="{{ url_for('auth.forgot_password') }}">Forgot Password?</a>
+                </div>
+                <div class="small mt-2">
+                    Need an account? <a href="{{ url_for('auth.register') }}">Register here</a>
                 </div>
             </div>
         </div>
