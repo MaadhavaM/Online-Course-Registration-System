@@ -372,6 +372,7 @@ def take_quiz(quiz_id):
         result = db.quiz_submissions.insert_one({
             'quiz_id': str(quiz_id),
             'student_id': student_id,
+            'student_name': current_user.user_data.get('name', 'Unknown'),
             'course_code': course_code,
             'score_percentage': score_percentage,
             'earned_credits': earned_credits,
