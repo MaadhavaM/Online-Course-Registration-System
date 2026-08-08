@@ -5,6 +5,7 @@ from werkzeug.utils import secure_filename
 from functools import wraps
 from datetime import datetime
 from bson.objectid import ObjectId
+from utils.mail import send_certificate_email
 
 student_bp = Blueprint('student', __name__)
 
@@ -390,6 +391,11 @@ def take_quiz(quiz_id):
                 {'student_id': student_id, 'course_code': course_code},
                 {'$set': {'status': 'Completed'}}
             )
+            # Send certificate email
+            student_data = db.students.find_one({'student_id': student_id})
+            if student_data and student_data.get('email'):
+                cert_url = url_for('student.certificate', course_code=course_code, _external=True)
+                send_certificate_email(student_data['email'], course['course_name'], cert_url)
             
         return redirect(url_for('student.quiz_result', submission_id=str(result.inserted_id)))
         

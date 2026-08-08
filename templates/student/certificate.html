@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <!-- html2pdf for downloading -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
         * {
@@ -291,8 +293,8 @@
 </head>
 <body>
 
-    <div class="print-controls">
-        <button class="btn btn-primary-custom rounded-pill px-4 py-2 fw-bold" onclick="window.print()">
+    <div class="print-controls" data-html2canvas-ignore>
+        <button class="btn btn-primary-custom rounded-pill px-4 py-2 fw-bold" onclick="downloadCertificate()">
             <i class="bi bi-download me-2"></i>Download
         </button>
         <a href="{{ url_for('student.dashboard') }}" class="btn btn-custom rounded-pill px-4 py-2 fw-bold">
@@ -379,6 +381,25 @@
         }
         window.addEventListener('resize', setScale);
         setScale();
+
+        function downloadCertificate() {
+            // Temporarily disable scaling for high-quality export
+            document.documentElement.style.setProperty('--scale', 1);
+            
+            const element = document.querySelector('.certificate-wrapper');
+            const opt = {
+                margin:       0,
+                filename:     '{{ course.course_code }}_Certificate.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'px', format: [1123, 794], orientation: 'landscape' }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                // Restore scaling after download
+                setScale();
+            });
+        }
     </script>
 </body>
 </html>

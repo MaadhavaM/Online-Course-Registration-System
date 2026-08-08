@@ -25,3 +25,32 @@ def send_otp_email(to, otp):
         return False
     finally:
         socket.setdefaulttimeout(None) # Reset timeout
+
+def send_certificate_email(to, course_name, certificate_url):
+    socket.setdefaulttimeout(5.0)
+    print(f"--- ATTENTION: Certificate for {course_name} sent to {to}. Link: {certificate_url} ---")
+    
+    try:
+        msg = Message(
+            subject=f'Congratulations on completing {course_name}!',
+            sender=current_app.config.get('MAIL_USERNAME', 'noreply@unicore.com'),
+            recipients=[to]
+        )
+        msg.body = f'''Hello,
+
+Congratulations on successfully completing the course: {course_name}!
+
+Your official certificate of completion is now ready. 
+You can view and download it at any time using the following link:
+{certificate_url}
+
+Best regards,
+The UniCore Education Team'''
+        
+        mail.send(msg)
+        return True
+    except Exception as e:
+        print(f"Error sending certificate email: {e}")
+        return False
+    finally:
+        socket.setdefaulttimeout(None)
