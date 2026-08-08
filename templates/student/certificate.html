@@ -309,29 +309,8 @@
             <div class="corner corner-bl"></div>
             <div class="corner corner-br"></div>
             <div class="certificate-border-inner">
-                <!-- SVG Seal moved to top right corner -->
-                <svg class="seal" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#F9F295"/>
-                            <stop offset="30%" stop-color="#E0AA3E"/>
-                            <stop offset="50%" stop-color="#F9F295"/>
-                            <stop offset="70%" stop-color="#B8860B"/>
-                            <stop offset="100%" stop-color="#E0AA3E"/>
-                        </linearGradient>
-                        <linearGradient id="goldGradDark" x1="0%" y1="100%" x2="100%" y2="0%">
-                            <stop offset="0%" stop-color="#B8860B"/>
-                            <stop offset="50%" stop-color="#F9F295"/>
-                            <stop offset="100%" stop-color="#E0AA3E"/>
-                        </linearGradient>
-                    </defs>
-                    <circle cx="100" cy="100" r="85" fill="url(#goldGradDark)" />
-                    <circle cx="100" cy="100" r="75" fill="#0f172a" />
-                    <circle cx="100" cy="100" r="70" fill="url(#goldGrad)" />
-                    <circle cx="100" cy="100" r="65" fill="#0f172a" />
-                    <path d="M70,100 L90,130 L130,100 L90,70 Z" fill="url(#goldGrad)"/>
-                    <path d="M100,50 L115,85 L150,100 L115,115 L100,150 L85,115 L50,100 L85,85 Z" fill="url(#goldGrad)"/>
-                </svg>
+                <!-- SVG Seal embedded as a base64 image to fix html2pdf rendering bug -->
+                <img class="seal" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxkZWZzPgogICAgICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ29sZEdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjRjlGMjk1Ii8+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iMzAlIiBzdG9wLWNvbG9yPSIjRTBBQTNFIi8+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjRjlGMjk1Ii8+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iNzAlIiBzdG9wLWNvbG9yPSIjQjg4NjBCIi8+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI0UwQUEzRSIvPgogICAgICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICAgICAgPGxpbmVhckdyYWRpZW50IGlkPSJnb2xkR3JhZERhcmsiIHgxPSIwJSIgeTE9IjEwMCUiIHgyPSIxMDAlIiB5Mj0iMCUiPgogICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjQjg4NjBCIi8+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjRjlGMjk1Ii8+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI0UwQUEzRSIvPgogICAgICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8L2RlZnM+CiAgICA8Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9Ijg1IiBmaWxsPSJ1cmwoI2dvbGRHcmFkRGFyaykiIC8+CiAgICA8Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9Ijc1IiBmaWxsPSIjMGYxNzJhIiAvPgogICAgPGNpcmNsZSBjeD0iMTAwIiBjeT0iMTAwIiByPSI3MCIgZmlsbD0idXJsKCNnb2xkR3JhZCkiIC8+CiAgICA8Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjY1IiBmaWxsPSIjMGYxNzJhIiAvPgogICAgPHBhdGggZD0iTTcwLDEwMCBMOTAsMTMwIEwxMzAsMTAwIEw5MCw3MCBaIiBmaWxsPSJ1cmwoI2dvbGRHcmFkKSIvPgogICAgPHBhdGggZD0iTTEwMCw1MCBMMTE1LDg1IEwxNTAsMTAwIEwxMTUsMTE1IEwxMDAsMTUwIEw4NSwxMTUgTDUwLDEwMCBMODUsODUgWiIgZmlsbD0idXJsKCNnb2xkR3JhZCkiLz4KPC9zdmc+">
                 
                 <div style="margin-top: 40px; margin-right: 120px; display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1;">
                     <div class="cert-header">CERTIFICATE OF EXCELLENCE</div>
