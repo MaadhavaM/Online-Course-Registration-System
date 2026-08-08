@@ -3,7 +3,7 @@ from flask_login import LoginManager, current_user
 from config import Config
 from database.db import init_db, get_fs
 from models.user import get_user_by_id
-from extensions import mail
+from extensions import mail, oauth
 from bson.objectid import ObjectId
 import io
 
@@ -13,6 +13,16 @@ def create_app(config_class=Config):
 
     # Initialize extensions
     mail.init_app(app)
+    oauth.init_app(app)
+
+    # Register Google OAuth
+    oauth.register(
+        name='google',
+        server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+        client_kwargs={
+            'scope': 'openid email profile'
+        }
+    )
 
     # Initialize MongoDB
     init_db(app)

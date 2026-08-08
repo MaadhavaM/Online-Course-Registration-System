@@ -7,7 +7,10 @@ load_dotenv(os.path.join(basedir, '.env'), override=True)
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard_to_guess_string'
     MONGO_URI = os.environ.get('MONGO_URI')
-    
+    # Google OAuth settings
+    GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
+    GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
+
     # Mail settings
     MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.googlemail.com')
     MAIL_PORT = int(os.environ.get('MAIL_PORT', 587))

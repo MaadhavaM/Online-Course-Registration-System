@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, session
 import random
+import string
+from extensions import oauth
 from flask_login import login_user, logout_user, login_required, current_user
 from forms.auth_forms import LoginForm, StudentRegistrationForm, AdminRegistrationForm
 from models.user import User, verify_password
@@ -278,6 +280,62 @@ def forgot_password():
             flash('No account found with that email and role.', 'danger')
             
     return render_template('auth/forgot_password.html', form=form)
+
+@auth_bp.route('/login/google')
+def login_google():
+    redirect_uri = url_for('auth.authorize_google', _external=True)
+    return oauth.google.authorize_redirect(redirect_uri)
+
+@auth_bp.route('/login/google/authorize')
+def authorize_google():
+    token = oauth.google.authorize_access_token()
+    user_info = token.get('userinfo')
+    if not user_info:
+        flash('Failed to fetch user info from Google.', 'danger')
+        return redirect(url_for('auth.login'))
+        
+    email = user_info.get('email')
+    name = user_info.get('name')
+    
+    db = get_db()
+    
+    # Check if admin
+    admin = db.admins.find_one({'email': email})
+    if admin:
+        login_user(User(admin, 'admin'))
+        return redirect(url_for('admin.dashboard'))
+        
+    # Check if instructor
+    instructor = db.instructors.find_one({'email': email})
+    if instructor:
+        login_user(User(instructor, 'instructor'))
+        return redirect(url_for('instructor.dashboard'))
+        
+    # Check if student
+    student = db.students.find_one({'email': email})
+    if student:
+        login_user(User(student, 'student'))
+        return redirect(url_for('student.dashboard'))
+        
+    # Auto-register new student
+    student_id = f"STU{''.join(random.choices(string.digits, k=6))}"
+    hashed_password = generate_password_hash(''.join(random.choices(string.ascii_letters + string.digits, k=16)))
+    
+    new_student = {
+        "student_id": student_id,
+        "name": name,
+        "email": email,
+        "phone": "",
+        "department": "Undeclared",
+        "semester": 1,
+        "password": hashed_password,
+        "profile_image": "default.png"
+    }
+    
+    db.students.insert_one(new_student)
+    login_user(User(new_student, 'student'))
+    flash('Account created automatically via Google!', 'success')
+    return redirect(url_for('student.dashboard'))
 
 @auth_bp.route('/verify-otp', methods=['GET', 'POST'])
 def verify_otp():
