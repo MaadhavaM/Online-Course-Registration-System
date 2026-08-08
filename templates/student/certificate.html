@@ -203,15 +203,35 @@
             color: #64748b;
             margin-top: 2px;
         }
-        
         .seal {
             position: absolute;
             top: 40px;
             right: 40px;
             width: 120px;
             height: 120px;
+            background: linear-gradient(135deg, #B8860B 0%, #F9F295 50%, #E0AA3E 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
             z-index: 1;
-            opacity: 1;
+        }
+
+        .seal-inner {
+            width: 100px;
+            height: 100px;
+            background: #0f172a;
+            border-radius: 50%;
+            border: 3px solid #d4af37;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .seal-inner i {
+            font-size: 3.5rem;
+            color: #F9F295;
         }
 
         /* Print Controls */
@@ -309,8 +329,12 @@
             <div class="corner corner-bl"></div>
             <div class="corner corner-br"></div>
             <div class="certificate-border-inner">
-                <!-- SVG Seal embedded as a base64 image to fix html2pdf rendering bug -->
-                <img class="seal" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxkZWZzPgogICAgICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ29sZEdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjRjlGMjk1Ii8+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iMzAlIiBzdG9wLWNvbG9yPSIjRTBBQTNFIi8+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjRjlGMjk1Ii8+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iNzAlIiBzdG9wLWNvbG9yPSIjQjg4NjBCIi8+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI0UwQUEzRSIvPgogICAgICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICAgICAgPGxpbmVhckdyYWRpZW50IGlkPSJnb2xkR3JhZERhcmsiIHgxPSIwJSIgeTE9IjEwMCUiIHgyPSIxMDAlIiB5Mj0iMCUiPgogICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjQjg4NjBCIi8+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjRjlGMjk1Ii8+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI0UwQUEzRSIvPgogICAgICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8L2RlZnM+CiAgICA8Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9Ijg1IiBmaWxsPSJ1cmwoI2dvbGRHcmFkRGFyaykiIC8+CiAgICA8Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9Ijc1IiBmaWxsPSIjMGYxNzJhIiAvPgogICAgPGNpcmNsZSBjeD0iMTAwIiBjeT0iMTAwIiByPSI3MCIgZmlsbD0idXJsKCNnb2xkR3JhZCkiIC8+CiAgICA8Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjY1IiBmaWxsPSIjMGYxNzJhIiAvPgogICAgPHBhdGggZD0iTTcwLDEwMCBMOTAsMTMwIEwxMzAsMTAwIEw5MCw3MCBaIiBmaWxsPSJ1cmwoI2dvbGRHcmFkKSIvPgogICAgPHBhdGggZD0iTTEwMCw1MCBMMTE1LDg1IEwxNTAsMTAwIEwxMTUsMTE1IEwxMDAsMTUwIEw4NSwxMTUgTDUwLDEwMCBMODUsODUgWiIgZmlsbD0idXJsKCNnb2xkR3JhZCkiLz4KPC9zdmc+">
+                <!-- Pure CSS Seal for perfect PDF rendering -->
+                <div class="seal">
+                    <div class="seal-inner">
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                </div>
                 
                 <div style="margin-top: 40px; margin-right: 120px; display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1;">
                     <div class="cert-header">CERTIFICATE OF EXCELLENCE</div>
