@@ -205,11 +205,10 @@
         
         .seal {
             position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 120px;
-            height: 120px;
+            top: 40px;
+            right: 40px;
+            width: 100px;
+            height: 100px;
             z-index: 1;
             opacity: 0.9;
         }
@@ -250,6 +249,18 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
             color: white;
+        }
+
+        @media screen and (max-width: 1150px) {
+            body {
+                padding: 100px 10px 20px;
+                align-items: flex-start;
+            }
+            .certificate-wrapper {
+                transform: scale(var(--scale, 1));
+                transform-origin: top center;
+                margin-bottom: calc(-794px * (1 - var(--scale, 1)));
+            }
         }
 
         @media print {
@@ -297,6 +308,29 @@
             <div class="corner corner-bl"></div>
             <div class="corner corner-br"></div>
             <div class="certificate-border-inner">
+                <!-- SVG Seal moved to top right corner -->
+                <svg class="seal" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#F9F295"/>
+                            <stop offset="30%" stop-color="#E0AA3E"/>
+                            <stop offset="50%" stop-color="#F9F295"/>
+                            <stop offset="70%" stop-color="#B8860B"/>
+                            <stop offset="100%" stop-color="#E0AA3E"/>
+                        </linearGradient>
+                        <linearGradient id="goldGradDark" x1="0%" y1="100%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#B8860B"/>
+                            <stop offset="50%" stop-color="#F9F295"/>
+                            <stop offset="100%" stop-color="#E0AA3E"/>
+                        </linearGradient>
+                    </defs>
+                    <circle cx="100" cy="100" r="85" fill="url(#goldGradDark)" />
+                    <circle cx="100" cy="100" r="75" fill="#0f172a" />
+                    <circle cx="100" cy="100" r="70" fill="url(#goldGrad)" />
+                    <circle cx="100" cy="100" r="65" fill="#0f172a" />
+                    <path d="M70,100 L90,130 L130,100 L90,70 Z" fill="url(#goldGrad)"/>
+                    <path d="M100,50 L115,85 L150,100 L115,115 L100,150 L85,115 L50,100 L85,85 Z" fill="url(#goldGrad)"/>
+                </svg>
                 
                 <div class="cert-header">Certificate of Excellence</div>
                 <div class="cert-subheader">UniCore Online Education Platform</div>
@@ -306,7 +340,7 @@
                 <div class="student-name">{{ student_name }}</div>
                 
                 <div class="completion-text">
-                    For outstanding dedication and having successfully fulfilled all rigorous requirements, assessments, and academic standards set forth in the completion of the program:
+                    For outstanding dedication and having successfully fulfilled all rigorous requirements, assessments, and academic standards set forth in the completion of the <strong>{{ course.get('duration', '16 weeks') }}</strong> program:
                 </div>
                 
                 <div class="course-name">{{ course.course_name }}</div>
@@ -319,38 +353,21 @@
                     <div class="signature-block">
                         <div class="signature-line"></div>
                         <div class="signature-name">{{ date }}</div>
-                        <div class="signature-title">Date of Issuance<br><span style="font-size: 0.75rem; color: #94a3b8; font-family: 'Montserrat', sans-serif;">Course {{ course.course_code }} &bull; {{ course.get('duration', '16 weeks') }}</span></div>
+                        <div class="signature-title">Date of Issuance<br><span style="font-size: 0.75rem; color: #94a3b8; font-family: 'Montserrat', sans-serif;">Course {{ course.course_code }}</span></div>
                     </div>
                     
-                    <!-- SVG Seal -->
-                    <svg class="seal" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#F9F295"/>
-                                <stop offset="30%" stop-color="#E0AA3E"/>
-                                <stop offset="50%" stop-color="#F9F295"/>
-                                <stop offset="70%" stop-color="#B8860B"/>
-                                <stop offset="100%" stop-color="#E0AA3E"/>
-                            </linearGradient>
-                            <linearGradient id="goldGradDark" x1="0%" y1="100%" x2="100%" y2="0%">
-                                <stop offset="0%" stop-color="#B8860B"/>
-                                <stop offset="50%" stop-color="#F9F295"/>
-                                <stop offset="100%" stop-color="#E0AA3E"/>
-                            </linearGradient>
-                        </defs>
-                        <circle cx="100" cy="100" r="85" fill="url(#goldGradDark)" />
-                        <circle cx="100" cy="100" r="75" fill="#0f172a" />
-                        <circle cx="100" cy="100" r="70" fill="url(#goldGrad)" />
-                        <circle cx="100" cy="100" r="65" fill="#0f172a" />
-                        <path d="M70,100 L90,130 L130,100 L90,70 Z" fill="url(#goldGrad)"/>
-                        <path d="M100,50 L115,85 L150,100 L115,115 L100,150 L85,115 L50,100 L85,85 Z" fill="url(#goldGrad)"/>
-                    </svg>
+                    <div class="signature-block">
+                        <div style="font-family: 'Pinyon Script', cursive; font-size: 2.5rem; color: #0f172a; margin-bottom: -15px;">Administration</div>
+                        <div class="signature-line"></div>
+                        <div class="signature-name">UniCore Admin</div>
+                        <div class="signature-title">Official Platform</div>
+                    </div>
                     
                     <div class="signature-block">
                         <div style="font-family: 'Pinyon Script', cursive; font-size: 2.5rem; color: #0f172a; margin-bottom: -15px;">{{ instructor_name }}</div>
                         <div class="signature-line"></div>
                         <div class="signature-name">Course Instructor</div>
-                        <div class="signature-title">Official UniCore Credential</div>
+                        <div class="signature-title">Academic Lead</div>
                     </div>
                 </div>
                 
@@ -358,5 +375,18 @@
         </div>
     </div>
 
+    <script>
+        function setScale() {
+            if (window.innerWidth < 1150) {
+                // padding of 20px on both sides = 40px total reserved space
+                const scale = (window.innerWidth - 40) / 1123; 
+                document.documentElement.style.setProperty('--scale', scale);
+            } else {
+                document.documentElement.style.setProperty('--scale', 1);
+            }
+        }
+        window.addEventListener('resize', setScale);
+        setScale();
+    </script>
 </body>
 </html>
