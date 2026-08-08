@@ -3,12 +3,16 @@ from flask_login import LoginManager, current_user
 from config import Config
 from database.db import init_db, get_fs
 from models.user import get_user_by_id
+from extensions import mail
 from bson.objectid import ObjectId
 import io
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+
+    # Initialize extensions
+    mail.init_app(app)
 
     # Initialize MongoDB
     init_db(app)

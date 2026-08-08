@@ -10,7 +10,7 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 class StudentRegistrationForm(FlaskForm):
-    student_id = StringField('Student ID', validators=[DataRequired(), Length(min=8, max=8), Regexp(r'^\d{8}$', message="Student ID must be exactly 8 digits.")])
+    student_id = StringField('Student ID', validators=[DataRequired(), Length(min=5, max=5), Regexp(r'^\d{5}$', message="Student ID must be exactly 5 digits.")])
     name = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=100), Regexp(r'^[A-Za-z\s]+$', message="Name must contain only alphabets and spaces.")])
     email = StringField('Email', validators=[DataRequired(), Email()])
     phone = StringField('Phone', validators=[DataRequired(), Length(min=10, max=15), Regexp(r'^\d+$', message="Phone number must contain only digits.")])
@@ -30,8 +30,11 @@ class StudentRegistrationForm(FlaskForm):
 
     def validate_email(self, email):
         db = get_db()
-        if db is not None and db.students.find_one({"email": email.data}):
-            raise ValidationError('That email is already registered. Please choose a different one.')
+        if db is not None:
+            if db.students.find_one({"email": email.data}) or \
+               db.admins.find_one({"email": email.data}) or \
+               db.instructors.find_one({"email": email.data}):
+                raise ValidationError('That email is already registered. Please choose a different one.')
 
     def validate_student_id(self, student_id):
         db = get_db()
@@ -48,12 +51,15 @@ class AdminRegistrationForm(FlaskForm):
 
     def validate_email(self, email):
         db = get_db()
-        if db is not None and db.admins.find_one({"email": email.data}):
-            raise ValidationError('That email is already registered as an Admin. Please choose a different one.')
+        if db is not None:
+            if db.students.find_one({"email": email.data}) or \
+               db.admins.find_one({"email": email.data}) or \
+               db.instructors.find_one({"email": email.data}):
+                raise ValidationError('That email is already registered. Please choose a different one.')
 
 class ForgotPasswordForm(FlaskForm):
     role = SelectField('Role', choices=[('student', 'Student'), ('instructor', 'Instructor'), ('admin', 'Admin')], validators=[DataRequired()])
-    phone = StringField('Registered Phone Number', validators=[DataRequired(), Length(min=10, max=15), Regexp(r'^\d+$', message="Phone number must contain only digits.")])
+    email = StringField('Registered Email', validators=[DataRequired(), Email()])
     submit = SubmitField('Send OTP')
 
 class VerifyOTPForm(FlaskForm):

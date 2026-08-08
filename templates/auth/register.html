@@ -15,7 +15,7 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             {{ student_form.student_id.label(class="form-label fw-bold") }}
-                            {{ student_form.student_id(class="form-control", placeholder="e.g. CS2023001") }}
+                            {{ student_form.student_id(class="form-control", placeholder="e.g. 56798", pattern="[0-9]{5}", maxlength="5", oninput="this.value = this.value.replace(/[^0-9]/g, '')", title="Student ID must be exactly 5 digits") }}
                             {% if student_form.student_id.errors %}
                             <div class="text-danger small mt-1">
                                 {% for error in student_form.student_id.errors %}<span>{{ error }}</span>{% endfor %}

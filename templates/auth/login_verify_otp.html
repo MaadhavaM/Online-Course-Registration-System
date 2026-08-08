@@ -10,7 +10,7 @@
             </div>
             <div class="card-body p-4 text-center">
                 <i class="bi bi-shield-check display-1 text-primary mb-3"></i>
-                <p class="text-muted mb-4">We've generated a 6-digit OTP for your security. Please enter it below to complete login.</p>
+                <p class="text-muted mb-4">We've generated a 6-digit OTP and sent it to your registered email for your security. Please enter it below to complete login.</p>
                 
                 <form method="POST" action="">
                     {{ form.hidden_tag() }}
@@ -34,7 +34,8 @@
             </div>
             <div class="card-footer text-center py-3 bg-light">
                 <div class="small">
-                    Didn't receive the OTP? <a href="{{ url_for('auth.login') }}">Go back to Login</a>
+                    Didn't receive the OTP? <a href="{{ url_for('auth.resend_login_otp') }}">Resend OTP</a><br>
+                    Or <a href="{{ url_for('auth.login') }}">go back to Login</a>
                 </div>
             </div>
         </div>

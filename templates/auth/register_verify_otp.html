@@ -1,16 +1,16 @@
 {% extends "base.html" %}
-{% block title %}Verify OTP - UniCore{% endblock %}
+{% block title %}Verify Registration OTP - UniCore{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center align-items-center mt-5">
     <div class="col-md-6 col-lg-5">
         <div class="card shadow-lg border-0 rounded-lg">
             <div class="card-header bg-primary text-white text-center py-3">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-envelope-check"></i> Verify Email OTP</h3>
+                <h3 class="mb-0 fw-bold"><i class="bi bi-envelope-check"></i> Verify Registration</h3>
             </div>
             <div class="card-body p-4 text-center">
                 <i class="bi bi-envelope-paper display-1 text-primary mb-3"></i>
-                <p class="text-muted mb-4">We've sent a 6-digit OTP to your registered email. Please enter it below to continue.</p>
+                <p class="text-muted mb-4">We've sent a 6-digit OTP to your email. Please enter it below to complete your registration.</p>
                 
                 <form method="POST" action="">
                     {{ form.hidden_tag() }}
@@ -34,8 +34,8 @@
             </div>
             <div class="card-footer text-center py-3 bg-light">
                 <div class="small">
-                    Didn't receive the OTP? <a href="{{ url_for('auth.resend_reset_otp') }}">Resend OTP</a><br>
-                    Or <a href="{{ url_for('auth.forgot_password') }}">try a different account</a>
+                    Didn't receive the OTP? <a href="{{ url_for('auth.resend_register_otp') }}">Resend OTP</a><br>
+                    Or <a href="{{ url_for('auth.register') }}">go back to Registration</a>
                 </div>
             </div>
         </div>
