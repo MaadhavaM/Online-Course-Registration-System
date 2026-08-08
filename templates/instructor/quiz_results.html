@@ -34,7 +34,7 @@
                 <tbody>
                     {% for sub in submissions %}
                     <tr>
-                        <td>{{ student_map.get(sub.student_id, sub.student_name if sub.student_name else 'Unknown') }}</td>
+                        <td>{{ student_map.get(sub.student_id, sub.get('student_name') or ('Student ' ~ sub.student_id)) }}</td>
                         <td>{{ sub.student_id }}</td>
                         <td>{{ sub.score_percentage | round(1) }}%</td>
                         <td>{{ sub.earned_credits }}</td>
