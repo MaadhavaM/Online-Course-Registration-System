@@ -140,14 +140,12 @@ def manage_assignments():
                 file_id = fs.put(file.read(), filename=filename, content_type=file.content_type)
                 
             requires_submission = request.form.get('requires_submission') == 'on'
-            due_date = request.form.get('due_date') if requires_submission else None
             
             assignment_data = {
                 'course_code': request.form.get('course_code'),
                 'section_number': int(request.form.get('section_number', 1)),
                 'title': request.form.get('title'),
                 'description': request.form.get('description'),
-                'due_date': due_date,
                 'requires_submission': requires_submission,
                 'file_id': file_id,
                 'filename': filename
@@ -178,13 +176,12 @@ def edit_assignment(assignment_id):
     
     try:
         requires_submission = request.form.get('requires_submission') == 'on'
-        due_date = request.form.get('due_date') if requires_submission else None
-        
         update_data = {
+            'course_code': request.form.get('course_code'),
+            'section_number': int(request.form.get('section_number', 1)),
             'title': request.form.get('title'),
             'description': request.form.get('description'),
-            'requires_submission': requires_submission,
-            'due_date': due_date
+            'requires_submission': requires_submission
         }
         
         db.assignments.update_one(

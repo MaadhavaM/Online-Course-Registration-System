@@ -26,7 +26,6 @@
                         <th>Section</th>
                         <th>Title</th>
                         <th>Description</th>
-                        <th>Due Date</th>
                         <th>File Attachment</th>
                         <th>Actions</th>
                     </tr>
@@ -38,13 +37,6 @@
                         <td><span class="badge bg-primary">Section {{ assignment.section_number|default(1) }}</span></td>
                         <td class="fw-bold">{{ assignment.title }}</td>
                         <td>{{ assignment.description }}</td>
-                        <td>
-                            {% if assignment.due_date %}
-                                {{ assignment.due_date }}
-                            {% else %}
-                                <span class="text-muted">N/A</span>
-                            {% endif %}
-                        </td>
                         <td>
                             {% if assignment.file_id %}
                                 <a href="{{ url_for('instructor.view_material', file_id=assignment.file_id) }}" class="btn btn-sm btn-outline-primary me-1"><i class="bi bi-eye"></i> View</a>
@@ -104,12 +96,8 @@
                         <textarea class="form-control" name="description" rows="3"></textarea>
                     </div>
                     <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="requiresSubmission" name="requires_submission" onchange="document.getElementById('dueDateDiv').style.display = this.checked ? 'block' : 'none';">
+                        <input type="checkbox" class="form-check-input" id="requiresSubmission" name="requires_submission">
                         <label class="form-check-label fw-bold" for="requiresSubmission">Does this material require a student submission? (Assignment)</label>
-                    </div>
-                    <div class="mb-3" id="dueDateDiv" style="display: none;">
-                        <label class="form-label fw-bold">Due Date</label>
-                        <input type="date" class="form-control" name="due_date">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Upload File</label>
@@ -136,6 +124,14 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
+                        <label class="form-label fw-bold">Course Code</label>
+                        <input type="text" class="form-control" name="course_code" value="{{ assignment.course_code }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Section Number</label>
+                        <input type="number" class="form-control" name="section_number" value="{{ assignment.section_number|default(1) }}" min="1" required>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label fw-bold">Title</label>
                         <input type="text" class="form-control" name="title" value="{{ assignment.title }}" required>
                     </div>
@@ -144,12 +140,8 @@
                         <textarea class="form-control" name="description" rows="3">{{ assignment.description }}</textarea>
                     </div>
                     <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="editRequiresSubmission{{ assignment._id }}" name="requires_submission" onchange="document.getElementById('editDueDateDiv{{ assignment._id }}').style.display = this.checked ? 'block' : 'none';" {% if assignment.requires_submission or assignment.due_date %}checked{% endif %}>
+                        <input type="checkbox" class="form-check-input" id="editRequiresSubmission{{ assignment._id }}" name="requires_submission" {% if assignment.requires_submission or assignment.due_date %}checked{% endif %}>
                         <label class="form-check-label fw-bold" for="editRequiresSubmission{{ assignment._id }}">Does this material require a student submission? (Assignment)</label>
-                    </div>
-                    <div class="mb-3" id="editDueDateDiv{{ assignment._id }}" style="display: {% if assignment.requires_submission or assignment.due_date %}block{% else %}none{% endif %};">
-                        <label class="form-label fw-bold">Due Date</label>
-                        <input type="date" class="form-control" name="due_date" value="{{ assignment.due_date }}">
                     </div>
                 </div>
                 <div class="modal-footer">
