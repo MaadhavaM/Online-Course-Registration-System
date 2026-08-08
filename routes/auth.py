@@ -317,8 +317,8 @@ def authorize_google():
         login_user(User(student, 'student'))
         return redirect(url_for('student.dashboard'))
         
-    # Auto-register new student
-    student_id = f"STU{''.join(random.choices(string.digits, k=6))}"
+    # Auto-register new student with exactly 5 digits
+    student_id = ''.join(random.choices(string.digits, k=5))
     hashed_password = generate_password_hash(''.join(random.choices(string.ascii_letters + string.digits, k=16)))
     
     new_student = {
