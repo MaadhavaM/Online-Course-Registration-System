@@ -331,20 +331,22 @@
                     <path d="M100,50 L115,85 L150,100 L115,115 L100,150 L85,115 L50,100 L85,85 Z" fill="url(#goldGrad)"/>
                 </svg>
                 
-                <div class="cert-header">CERTIFICATE OF EXCELLENCE</div>
-                <div class="cert-subheader">Certificate of Recognition</div>
-                
-                <div class="student-name">{{ student_name }}</div>
-                
-                <div class="course-name">{{ course.course_name }} Certified Foundations Associate</div>
-                
-                <div class="completion-text">
-                    This certifies that the above named has successfully completed the <strong>{{ course.get('duration', '16 weeks') }}</strong> program and is recognized by UniCore Corporation as UniCore Certified.
-                </div>
-                
-                <!-- Grade display mapped seamlessly into the design -->
-                <div class="grade-badge">
-                    <i class="bi bi-award-fill me-2"></i> Overall Score: {{ grade|round(1) }}%
+                <div style="margin-top: 40px; margin-right: 120px; display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1;">
+                    <div class="cert-header">CERTIFICATE OF EXCELLENCE</div>
+                    <div class="cert-subheader">Certificate of Recognition</div>
+                    
+                    <div class="student-name">{{ student_name }}</div>
+                    
+                    <div class="course-name">{{ course.course_name }}</div>
+                    
+                    <div class="completion-text">
+                        This certifies that the above named has successfully completed the <strong>{{ course.get('duration', '16 weeks') }}</strong> program and is recognized by UniCore as UniCore Certified.
+                    </div>
+                    
+                    <!-- Grade display mapped seamlessly into the design -->
+                    <div class="grade-badge">
+                        <i class="bi bi-award-fill me-2"></i> Overall Score: {{ grade|round(1) }}%
+                    </div>
                 </div>
                 
                 <div class="footer-section">
