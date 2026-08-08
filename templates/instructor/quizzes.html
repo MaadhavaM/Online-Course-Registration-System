@@ -214,5 +214,13 @@
     
     // Add first question automatically
     document.addEventListener('DOMContentLoaded', addQuestion);
+    
+    // Reset modal when closed
+    document.getElementById('createQuizModal').addEventListener('hidden.bs.modal', function () {
+        document.getElementById('quizForm').reset();
+        document.getElementById('questionsContainer').innerHTML = '';
+        qCount = 0;
+        addQuestion(); // Add one empty question back
+    });
 </script>
 {% endblock %}
